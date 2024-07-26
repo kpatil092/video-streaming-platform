@@ -1,5 +1,6 @@
 import { ShortsCard } from "@/components/ShortsCard";
-import React from "react";
+import React, { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 const shorts = [
   {
@@ -23,6 +24,16 @@ const shorts = [
 ];
 
 export const Shorts = () => {
+
+  // const { pathname } = useLocation();
+  // useEffect(() => {
+  //   window.scrollTo({
+  //     top: 0,
+  //     left: 0,
+  //     behavior: "instant",
+  //   });
+  // }, [pathname]);
+
   return (
     <div className="w-full overflow-y-scroll h-screen flex flex-col items-center">
       {shorts.map((short, index) => (

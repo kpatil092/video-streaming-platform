@@ -1,6 +1,8 @@
 import React, { useRef } from "react";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
+import KeyboardArrowLeftOutlinedIcon from "@mui/icons-material/KeyboardArrowLeftOutlined";
+import KeyboardArrowRightOutlinedIcon from "@mui/icons-material/KeyboardArrowRightOutlined";
 
 const ScrollablePanel = () => {
   const labels = [
@@ -45,12 +47,12 @@ const ScrollablePanel = () => {
   };
 
   return (
-    <div className="sticky flex items-center top-0 bg-white z-10 gap-3">
+    <div className="flex items-center top-0 bg-gray-100 z-10 gap-3">
       <Button
         onClick={scrollLeft}
-        className="bg-gray-600 p-2 rounded-l-md focus:outline-none"
+        className="bg-gray-100 hover:bg-gray-300 p-2 rounded-full focus:outline-none text-black cursor-pointer"
       >
-        &lt;
+        <KeyboardArrowLeftOutlinedIcon />
       </Button>
       <div
         ref={scrollContainerRef}
@@ -61,17 +63,17 @@ const ScrollablePanel = () => {
           <Badge
             variant="outline"
             key={index}
-            className="inline-block text-sm px-4 py-2 mx-2 bg-gray-200 cursor-pointer"
+            className="inline-block text-sm px-4 py-2 mx-2 bg-gray-200 cursor-pointer hover:bg-gray-300"
           >
             {label}
           </Badge>
         ))}
       </div>
       <Button
-        onClick={scrollRight}
-        className="bg-gray-600 p-2 rounded-r-md focus:outline-none"
+        onClick={scrollLeft}
+        className="bg-gray-100 hover:bg-gray-300 p-2 rounded-full focus:outline-none text-black cursor-pointer"
       >
-        &gt;
+        <KeyboardArrowRightOutlinedIcon />
       </Button>
     </div>
   );

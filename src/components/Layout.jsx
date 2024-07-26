@@ -3,25 +3,28 @@ import React from "react";
 import { Outlet } from "react-router-dom";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
-import Video from "@/pages/Video";
-
-const watch = false;
+import { SidebarMessageProvider } from "@/contexts/SidebarContext";
+import ScrollToTop from "./ScrollToTop";
 
 const Layout = ({ children }) => {
   return (
-    <div className="flex flex-col h-screen">
-      <Header />
-      {watch ? (
-        <Video />
-      ) : (
-        <div className="flex flex-1 overflow-hidden">
-          <Sidebar />
-          <main className="flex-1 overflow-y-auto">
+    <SidebarMessageProvider>
+      <div className="flex flex-col h-screen bg-gray-100">
+        <div className="flex items-center">
+          <Header />
+        </div>
+
+        <div className="flex overflow-hidden">
+          <div className="flex-[1]">
+            <Sidebar />
+          </div>
+          <main className="flex-[30] overflow-y-auto bg-slate-100">
+            <ScrollToTop />
             <Outlet />
           </main>
         </div>
-      )}
-    </div>
+      </div>
+    </SidebarMessageProvider>
   );
 };
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import PopoverMenu from "./PopoverMenu";
+import { Link, NavLink } from "react-router-dom";
 
 export const VideoCard = ({
   thumbnail,
@@ -10,15 +11,17 @@ export const VideoCard = ({
   uploadTime,
   videoLength,
   small,
+  id = 1,
 }) => {
   return (
-    <div
+    <Link
+      to={`/video/${id}`}
       className={`flex gap-1 max-w-sm rounded overflow-hidden mb-5 shadow-md cursor-pointer ${
         small ? "w-full" : "flex-col"
       }`}
     >
       <div className={`relative ${small && "flex-[4]"}`}>
-        <img className="w-full" src={thumbnail} alt="Video Thumbnail" />
+        <img className="w-full " src={thumbnail} alt="Video Thumbnail" />
         <div className="absolute bottom-1 right-1 bg-black bg-opacity-75 text-white text-xs px-1.5 py-0.5 rounded">
           {videoLength}
         </div>
@@ -46,6 +49,6 @@ export const VideoCard = ({
         </div>
         <PopoverMenu />
       </div>
-    </div>
+    </Link>
   );
 };
