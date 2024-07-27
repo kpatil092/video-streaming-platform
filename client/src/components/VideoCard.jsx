@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import PopoverMenu from "./PopoverMenu";
-import { Link, NavLink } from "react-router-dom";
 
-export const VideoCard = ({
+const VideoCard = ({
   thumbnail,
   channelLogo,
   title,
@@ -52,3 +52,5 @@ export const VideoCard = ({
     </Link>
   );
 };
+
+export default VideoCard;

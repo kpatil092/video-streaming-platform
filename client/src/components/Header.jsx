@@ -1,20 +1,25 @@
 // src/components/Header.jsx
 import React from "react";
-import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
+
+import { useSidebarMessage } from "@/contexts/SidebarContext";
+
+import Searchbar from "./Searchbar";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
-import { useSidebarMessage } from "@/contexts/SidebarContext";
+
 
 const Header = () => {
   const { setSidebarToggle } = useSidebarMessage();
+
   return (
     <header className="bg-gray-100 text-black px-6 py-3 flex items-center justify-between border-b-[2px] w-full">
       {/* Logo */}
       <div className="flex gap-5">
         <div
           className="hidden lg:block cursor-pointer hover:bg-gray-300 rounded-full p-2"
-          onClick={() => setSidebarToggle(toggle => !toggle)}
+          onClick={() => setSidebarToggle((toggle) => !toggle)}
         >
           <MenuIcon />
         </div>
@@ -29,12 +34,8 @@ const Header = () => {
         </div>
       </div>
       {/* Search Bar */}
-      <div className="w-[50%] md:w-[40%] flex border-gray-400 border-[1px] py-2 px-4 rounded-full">
-        <input
-          placeholder="Search"
-          className="bg-transparent flex-[12] border-none outline-none w-full"
-        />
-        <SearchOutlinedIcon className="flex-1 p-0 cursor-pointer" />
+      <div className="relative w-[50%] md:w-[40%] flex border-gray-400 border-[1px] py-2 px-4 rounded-full">
+        <Searchbar />
       </div>
       {/* Profile Icon */}
       <div className="flex items-center gap-6">

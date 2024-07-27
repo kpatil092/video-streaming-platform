@@ -1,8 +1,8 @@
+import React, { useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import React, { useEffect } from "react";
-import { useLocation } from "react-router-dom";
 
 const Channel = () => {
   const { pathname } = useLocation();
@@ -13,7 +13,7 @@ const Channel = () => {
       behavior: "instant",
     });
   }, [pathname]);
-  
+
   return (
     <div className="flex flex-col items-center">
       <div className="flex flex-col xl:w-[95%] mt-5 gap-3 px-4">
@@ -30,7 +30,9 @@ const Channel = () => {
           <div className="flex flex-1 gap-2 flex-col">
             <h1 className="font-bold text-2xl lg:text-4xl">KP</h1>
             <span className="text-gray-600 text-sm lg:text-md">@itz_kp092</span>
-            <p className="text-gray-600 text-xs lg:text-sm">More about this channel</p>
+            <p className="text-gray-600 text-xs lg:text-sm">
+              More about this channel
+            </p>
             <div className="flex flex-1 gap-5 items-center justify-start">
               <Button className="text-sm lg:text-md rounded-3xl bg-gray-200 hover:bg-gray-300 text-black">
                 Customise channel
@@ -60,7 +62,9 @@ const Channel = () => {
             <p>Upload and record at home or on the go.</p>
             <p>Everything that you make public will appear here.</p>
           </div>
-          <Button className="rounded-3xl">Create</Button>
+          <Link to={"./upload"}>
+            <Button className="rounded-3xl">Create</Button>
+          </Link>
         </div>
       </div>
     </div>

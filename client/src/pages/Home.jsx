@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import ScrollablePanel from "@/components/ScrollablePanel";
-import { VideoCard } from "@/components/VideoCard";
-import { useLocation } from 'react-router-dom';
+import VideoCard from "@/components/VideoCard";
 
 const Home = () => {
   const { pathname } = useLocation();
@@ -13,7 +13,6 @@ const Home = () => {
     });
   }, [pathname]);
 
-  
   return (
     <div className="px-2 md:container relative">
       <div className="sticky top-0 z-10">

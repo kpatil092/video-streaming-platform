@@ -1,14 +1,14 @@
 // src/components/ActionButtons.js
 
 import React from "react";
-import { Button } from "./ui/button";
 import PopoverMenu from "./PopoverMenu";
+import { Button } from "./ui/button";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
 import MapsUgcOutlinedIcon from "@mui/icons-material/MapsUgcOutlined";
 import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 
-export const ShortsActionButtons = () => {
+const ShortsActionButtons = () => {
   return (
     <div className="flex flex-col items-center gap-4 h-max ">
       <div className="flex flex-col justify-center items-center">
@@ -51,3 +51,5 @@ export const ShortsActionButtons = () => {
     </div>
   );
 };
+
+export default ShortsActionButtons;

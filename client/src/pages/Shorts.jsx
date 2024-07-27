@@ -1,6 +1,6 @@
-import { ShortsCard } from "@/components/ShortsCard";
 import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import ShortsCard from "@/components/ShortsCard";
 
 const shorts = [
   {
@@ -23,8 +23,7 @@ const shorts = [
   // Add more Short objects as needed
 ];
 
-export const Shorts = () => {
-
+const Shorts = () => {
   // const { pathname } = useLocation();
   // useEffect(() => {
   //   window.scrollTo({
@@ -44,3 +43,5 @@ export const Shorts = () => {
     </div>
   );
 };
+
+export default Shorts;

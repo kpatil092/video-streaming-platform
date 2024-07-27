@@ -1,8 +1,8 @@
 import React from "react";
-import { ShortsActionButtons } from "./ShortsActionButton";
+import ShortsActionButtons from "./ShortsActionButton";
 import { Button } from "./ui/button";
 
-export const ShortsCard = ({ short }) => {
+const ShortsCard = ({ short }) => {
   return (
     // <div className="flex flex-2my-4 "> </div>
       <div className="w-full flex justify-center items-end my-4 gap-4">
@@ -32,3 +32,5 @@ export const ShortsCard = ({ short }) => {
     
   );
 };
+
+export default ShortsCard;

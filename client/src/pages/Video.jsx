@@ -1,18 +1,22 @@
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import TextareaAutosize from "react-textarea-autosize";
+
+import VideoCard from "@/components/VideoCard";
 import Comments from "@/components/Comments";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+
 import DownloadIcon from "@mui/icons-material/Download";
 import ShareIcon from "@mui/icons-material/Share";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import { VideoCard } from "@/components/VideoCard";
-import { useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
-import TextareaAutosize from "react-textarea-autosize";
+
 
 const Video = () => {
   const counts = 7;
@@ -179,8 +183,8 @@ const Video = () => {
                 className="mt-1 p-2 border-t-0 border-x-0 border-b-[1.5px] bg-transparent border-gray-400 w-full focus:outline-none focus:border-gray-800 resize-none transition-colors"
               />
               <div className="flex justify-end gap-7">
-                <Button className="rounded-full h-auto text-sm">Cancel</Button>
-                <Button className="rounded-full h-auto " disabled>
+                <Button className="rounded-full h-auto text-sm text-black bg-gray-200 hover:bg-gray-300 border-gray-300 border-[0.5px] ">Cancel</Button>
+                <Button className="rounded-full h-auto text-white bg-gray-800 hover:bg-gray-700 border-gray-1000 border-[0.5px]">
                   Comment
                 </Button>
               </div>

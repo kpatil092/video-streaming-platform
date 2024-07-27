@@ -14,7 +14,7 @@ const Layout = ({ children }) => {
           <Header />
         </div>
 
-        <div className="flex overflow-hidden">
+        <div className="flex overflow-hidden h-full">
           <div className="flex-[1]">
             <Sidebar />
           </div>
