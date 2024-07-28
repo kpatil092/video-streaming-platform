@@ -54,7 +54,7 @@ const Create = () => {
 
   useEffect(() => {
     setIsFormValid(
-      titleValue &&
+      titleValue.trim() &&
         descriptionValue &&
         tags &&
         videoFile &&

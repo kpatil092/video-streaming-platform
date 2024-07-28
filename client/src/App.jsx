@@ -11,6 +11,8 @@ import Channel from "./pages/Channel";
 import Video from "./pages/Video";
 import NotFound from "./pages/NotFound";
 import Create from "./pages/Create";
+import SignIn from "./pages/SignIn";
+import SignUp from "./pages/SignUp";
 
 const channelName = "mychannel";
 
@@ -22,6 +24,8 @@ const router = createBrowserRouter(
       <Route path={`${channelName}/upload`} element={<Create />} />
       <Route path="shorts/:id" element={<Shorts />} />
       <Route path="video/:id" element={<Video />} />
+      <Route path="sign-in" element={<SignIn />} />
+      <Route path="sign-up" element={<SignUp />} />
       <Route path="*" element={<NotFound />} />
     </Route>
   )

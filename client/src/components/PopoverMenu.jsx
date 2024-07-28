@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
   Popover,
   PopoverContent,
@@ -16,8 +16,28 @@ import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import ReportIcon from "@mui/icons-material/Report";
 
 const PopoverMenu = () => {
+  const popoverMenuRef = useRef(null);
+
+  // useEffect(() => {
+  //   const handleClickOutside = (event) => {
+  //     if (
+  //       popoverMenuRef.current && !popoverMenuRef.current.contains(event.target)
+  //     ) {
+  //       setSuggestions([]);
+  //     }
+  //   };
+
+  //   document.addEventListener("mousedown", handleClickOutside);
+  //   document.addEventListener("scrolldown", handleClickOutside);
+  //   document;
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClickOutside);
+  //     document.removeEventListener("scroll", handleClickOutside);
+  //   };
+  // }, []);
+
   return (
-    <div className="flex">
+    <div className="flex" ref={popoverMenuRef}>
       <Popover className="flex-1">
         <PopoverTrigger className="h-6 w-6">
           <MoreVertIcon />

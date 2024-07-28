@@ -14,18 +14,17 @@ const VideoCard = ({
   id = 1,
 }) => {
   return (
-    <Link
-      to={`/video/${id}`}
+    <div
       className={`flex gap-1 max-w-sm rounded overflow-hidden mb-5 shadow-md cursor-pointer ${
         small ? "w-full" : "flex-col"
       }`}
     >
-      <div className={`relative ${small && "flex-[4]"}`}>
+      <Link to={`/video/${id}`} className={`relative ${small && "flex-[4]"}`}>
         <img className="w-full " src={thumbnail} alt="Video Thumbnail" />
         <div className="absolute bottom-1 right-1 bg-black bg-opacity-75 text-white text-xs px-1.5 py-0.5 rounded">
           {videoLength}
         </div>
-      </div>
+      </Link>
       <div className={`flex p-1 ${small && "flex-[5]"}`}>
         {!small && (
           <img
@@ -35,13 +34,13 @@ const VideoCard = ({
           />
         )}
         <div className="flex flex-col flex-1 ">
-          <div
+          <Link to={`/video/${id}`}
             className={`font-bold line-clamp-2 ${
               small ? "text-xs" : "text-sm"
             }`}
           >
             {title}
-          </div>
+          </Link>
           <div className="text-gray-500 text-xs">{channelName}</div>
           <div className="text-gray-500 text-xs">
             {views} views • {uploadTime}
@@ -49,7 +48,7 @@ const VideoCard = ({
         </div>
         <PopoverMenu />
       </div>
-    </Link>
+    </div>
   );
 };
 
