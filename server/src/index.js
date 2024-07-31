@@ -3,7 +3,7 @@ import ConnectDB from "./db/index.js";
 import { app } from "./app.js";
 
 dotenv.config({
-  path: "./env",
+  path: "./.env",
 });
 
 const port = process.env.PORT || 8000;
@@ -18,6 +18,9 @@ ConnectDB()
   .then(() => {
     app.listen(port, () => {
       console.log(`Serving at http://localhost:${port}`);
+    });
+    app.get("/", (req, res) => {
+      res.send("Server is ready!!!");
     });
   })
   .catch((err) => {
