@@ -5,6 +5,9 @@ import TextareaAutosize from "react-textarea-autosize";
 import VideoCard from "@/components/VideoCard";
 import Comments from "@/components/Comments";
 
+import 'video.js/dist/video-js.css';
+import videojs from 'video.js';
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,7 +19,7 @@ import ShareIcon from "@mui/icons-material/Share";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-
+import VideoPlayer from "@/components/VideoPlayer";
 
 const Video = () => {
   const counts = 7;
@@ -50,15 +53,15 @@ const Video = () => {
     }
   };
 
+  const videoUrl = "https://www.taxmann.com/emailer/images/Incometax.mp4"; // Replace with your actual video URL
+  const videoTitle = "Sample Video Title"; // Replace with your actual video title
+
   return (
     <div className="px-4 flex flex-col xl:flex-row gap-5 my-5 w-full">
       <main className="flex flex-col flex-[2] gap-3">
-        <div className="flex justify-center w-full">
-          <img
-            src="https://via.placeholder.com/900x500"
-            alt="Video"
-            className="rounded-2xl"
-          />
+        <div className="flex justify-center w-full rounded-xl overflow-hidden"> 
+          {/* <img src="https://via.placeholder.com/900x500" alt="Video" className="rounded-2xl"/>    */}
+          <VideoPlayer videoUrl={videoUrl} title={videoTitle} />
         </div>
         <h2 className="font-bold text-xl line-clamp-2">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam
@@ -183,7 +186,9 @@ const Video = () => {
                 className="mt-1 p-2 border-t-0 border-x-0 border-b-[1.5px] bg-transparent border-gray-400 w-full focus:outline-none focus:border-gray-800 resize-none transition-colors"
               />
               <div className="flex justify-end gap-7">
-                <Button className="rounded-full h-auto text-sm text-black bg-gray-200 hover:bg-gray-300 border-gray-300 border-[0.5px] ">Cancel</Button>
+                <Button className="rounded-full h-auto text-sm text-black bg-gray-200 hover:bg-gray-300 border-gray-300 border-[0.5px] ">
+                  Cancel
+                </Button>
                 <Button className="rounded-full h-auto text-white bg-gray-800 hover:bg-gray-700 border-gray-1000 border-[0.5px]">
                   Comment
                 </Button>

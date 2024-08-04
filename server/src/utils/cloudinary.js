@@ -8,12 +8,14 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const uploadOnCloudinary = async (localFilePath) => {
+const uploadOnCloudinary = async (localFilePath, folder = "") => {
   try {
     if (!localFilePath) return null;
     const response = await cloudinary.uploader.upload(localFilePath, {
       resource_type: "auto",
+      folder: folder,
     });
+    console.log(folder);
 
     // console.log("file is uploaded on cloudinary!", response.url);
     fs.unlinkSync(localFilePath);
@@ -25,10 +27,9 @@ const uploadOnCloudinary = async (localFilePath) => {
   }
 };
 
-const deleteFromCloudinary = async (url) => {
+const deleteFromCloudinary = async (publicId, type) => {
   try {
-    const publicId = url.split("/").pop().split(".")[0];
-    await cloudinary.uploader.destroy(publicId);
+    await cloudinary.uploader.destroy(publicId, { resource_type: type });
     console.log("Previous file deleted successfully.");
   } catch (error) {
     throw new ApiError(401, "Fail to delete file from storage");

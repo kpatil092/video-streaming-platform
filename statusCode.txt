@@ -1,0 +1,11 @@
+200: success/ok
+301: permanant redirect
+302: temporary redirect
+304: Not Modified
+400: Bad Request
+401: Unauthorized Error
+403: Forbidden
+404: Not Found
+409: Conflict 
+500: Internal Server Error 
+501: Not Implemented 

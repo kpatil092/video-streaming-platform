@@ -13,6 +13,7 @@ import NotFound from "./pages/NotFound";
 import Create from "./pages/Create";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
+import { AuthProvider } from "./contexts/AuthContext";
 
 const channelName = "mychannel";
 
@@ -30,6 +31,10 @@ const router = createBrowserRouter(
     </Route>
   )
 );
-const App = () => <RouterProvider router={router} />;
+const App = () => (
+  <AuthProvider>
+    <RouterProvider router={router} />
+  </AuthProvider>
+);
 
 export default App;

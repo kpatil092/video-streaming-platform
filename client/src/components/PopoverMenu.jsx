@@ -48,50 +48,50 @@ const PopoverMenu = () => {
               <button className="flex items-center px-4 py-1 w-full text-left hover:bg-gray-100">
                 <span className="mr-3">
                   <QueueIcon />
-                </span>{" "}
+                </span>
                 Add to queue
               </button>
               <button className="flex items-center px-4 py-2 w-full text-left hover:bg-gray-100">
                 <span className="mr-3">
                   <WatchLaterIcon />
-                </span>{" "}
+                </span>
                 Save to Watch Later
               </button>
               <button className="flex items-center px-4 py-2 w-full text-left hover:bg-gray-100">
                 <span className="mr-3">
                   <FolderSpecialIcon />
-                </span>{" "}
+                </span>
                 Save to playlist
               </button>
               <button className="flex items-center px-4 py-2 w-full text-left hover:bg-gray-100">
                 <span className="mr-3">
                   <GetAppIcon />
-                </span>{" "}
+                </span>
                 Download
               </button>
               <button className="flex items-center px-4 py-2 w-full text-left hover:bg-gray-100">
                 <span className="mr-3">
                   <ShareIcon />
-                </span>{" "}
+                </span>
                 Share
               </button>
               <Separator className="my-1" />
               <button className="flex items-center px-4 py-2 w-full text-left hover:bg-gray-100">
                 <span className="mr-3">
                   <NotInterestedIcon />
-                </span>{" "}
+                </span>
                 Not interested
               </button>
               <button className="flex items-center px-4 py-2 w-full text-left hover:bg-gray-100">
                 <span className="mr-3">
                   <RemoveCircleOutlineIcon />
-                </span>{" "}
+                </span>
                 Don't recommend channel
               </button>
               <button className="flex items-center px-4 py-2 w-full text-left hover:bg-gray-100">
                 <span className="mr-3">
                   <ReportIcon />
-                </span>{" "}
+                </span>
                 Report
               </button>
             </div>

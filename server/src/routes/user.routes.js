@@ -1,4 +1,6 @@
 import { Router } from "express";
+import { upload } from "../middlewares/multer.middleware.js";
+import { verifyJWT } from "../middlewares/auth.middleware.js";
 import {
   changeCurrentPassword,
   getCurrentUser,
@@ -13,8 +15,7 @@ import {
   updateCoverImage,
   updateUserAvatar,
 } from "../controllers/user.controller.js";
-import { upload } from "../middlewares/multer.middleware.js";
-import { verifyJWT } from "../middlewares/auth.middleware.js";
+import { getUserComment } from "../controllers/comments.controller.js";
 
 const router = Router();
 
@@ -30,7 +31,7 @@ router.route("/login").post(loginUser);
 router.route("/c/videos/:channelName").get(getUsersVideos);
 
 // secured route
-router.route("/").get(verifyJWT, getCurrentUser);
+router.route("/current-user").get(verifyJWT, getCurrentUser);
 router.route("/logout").post(verifyJWT, logoutUser);
 router.route("/refresh-token").post(refreshAccessToken);
 
@@ -46,6 +47,9 @@ router.route("/change-password").post(verifyJWT, changeCurrentPassword);
 router.route("/update").patch(verifyJWT, updateAccountDetails);
 router.route("/c/:channelName").get(verifyJWT, getUserChannelProfile);
 router.route("/history").get(verifyJWT, getWatchHistory);
+
+// Comment route
+router.route("/comments").get(verifyJWT, getUserComment);
 
 export default router;
 

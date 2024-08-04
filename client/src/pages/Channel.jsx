@@ -3,9 +3,12 @@ import { Link, useLocation } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Channel = () => {
   const { pathname } = useLocation();
+  const { currentUser } = useAuth();
+  // console.log(currentUser);
   useEffect(() => {
     window.scrollTo({
       top: 0,
@@ -17,19 +20,31 @@ const Channel = () => {
   return (
     <div className="flex flex-col items-center">
       <div className="flex flex-col xl:w-[95%] mt-5 gap-3 px-4">
-        <img
-          src="https://via.placeholder.com/1100x175"
-          alt="CoverImage"
-          className="rounded-2xl"
-        />
+        {/* Cover Image */}
+        <div className="flex items-center w-full h-auto max-h-[200px] overflow-hidden bg-gray-200 rounded-2xl">
+          <img
+            src={
+              currentUser?.coverImage || "https://via.placeholder.com/1100x175"
+            }
+            alt="CoverImage"
+            className="w-full h-full object-cover"
+          />
+        </div>
         <div className="flex gap-5">
           <Avatar className="h-[120px] w-[120px] lg:h-[150px] lg:w-[150px]">
-            <AvatarImage src="https://github.com/shadcn.png" />
-            <AvatarFallback>CN</AvatarFallback>
+            <AvatarImage
+              src={currentUser?.avatar || "https://github.com/shadcn.png"}
+              className="object-cover"
+            />
+            <AvatarFallback>{currentUser?.fullName?.[0] || "A"}</AvatarFallback>
           </Avatar>
           <div className="flex flex-1 gap-2 flex-col">
-            <h1 className="font-bold text-2xl lg:text-4xl">KP</h1>
-            <span className="text-gray-600 text-sm lg:text-md">@itz_kp092</span>
+            <h1 className="font-bold text-2xl lg:text-4xl">
+              {currentUser?.fullName || "User"}
+            </h1>
+            <span className="text-gray-600 text-sm lg:text-md">
+              {"@" + currentUser?.channelName || "!@#"}
+            </span>
             <p className="text-gray-600 text-xs lg:text-sm">
               More about this channel
             </p>

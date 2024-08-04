@@ -17,6 +17,7 @@ import WatchLaterIcon from "@mui/icons-material/WatchLater";
 import TocIcon from "@mui/icons-material/Toc";
 import SettingsIcon from "@mui/icons-material/Settings";
 import FlagIcon from "@mui/icons-material/Flag";
+import { useAuth } from "@/contexts/AuthContext";
 
 const categories = [
   [
@@ -75,15 +76,17 @@ const categories = [
   ],
 ];
 
-const SidebarItem = ({ category, size }) => {
+const SidebarItem = ({ category, size, authStatus }) => {
   const { sidebarToggle: toggle } = useSidebarMessage();
+  const canBeAccessed =
+    authStatus || category.name === "Home" || category.name === "Shorts";
   return (
     <NavLink
-      to={category.path}
+      to={canBeAccessed ? category.path : "/sign-in"}
       className={({ isActive }) =>
         `flex flex-col lg:gap-2 w-auto items-center px-2 sm:px-3 py-2 hover:bg-gray-200 hover:rounded-sm cursor-pointer ${
           toggle && "lg:flex-row lg:w-48 gap-2 lg:gap-5"
-        } ${isActive ? "bg-gray-200" : ""}`
+        } ${isActive && canBeAccessed ? "bg-gray-200" : ""}`
       }
     >
       {category.icon()}
@@ -101,6 +104,8 @@ const SidebarItem = ({ category, size }) => {
 const Sidebar = () => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
+  const { isAuthenticated, currentUser } = useAuth();
+
   const handleResize = () => {
     setWindowWidth(window.innerWidth);
   };
@@ -112,7 +117,7 @@ const Sidebar = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, [window.innerWidth]);
-  !(parseInt(windowWidth) < ScreenWidth.lg);
+  // !(parseInt(windowWidth) < ScreenWidth.lg);
 
   return (
     <div
@@ -120,21 +125,37 @@ const Sidebar = () => {
     >
       <div className="flex flex-col gap-5 lg:gap-2">
         {categories[0].map((category) => (
-          <SidebarItem key={category.id} category={category} />
+          <SidebarItem
+            key={category.id}
+            category={category}
+            authStatus={isAuthenticated}
+          />
         ))}
         {parseInt(windowWidth) >= ScreenWidth.md && (
           <>
             <Separator />
             {categories[1].map((category) => (
-              <SidebarItem key={category.id} category={category} />
+              <SidebarItem
+                key={category.id}
+                category={category}
+                authStatus={isAuthenticated}
+              />
             ))}
             <Separator />
             {categories[2].map((category) => (
-              <SidebarItem key={category.id} category={category} />
+              <SidebarItem
+                key={category.id}
+                category={category}
+                authStatus={isAuthenticated}
+              />
             ))}
             <Separator />
             {categories[3].map((category) => (
-              <SidebarItem key={category.id} category={category} />
+              <SidebarItem
+                key={category.id}
+                category={category}
+                authStatus={isAuthenticated}
+              />
             ))}
           </>
         )}

@@ -13,7 +13,6 @@ const FileUploader = ({ onDrop, accept, file, type, setVideoLink }) => {
         setUploading(false);
         const generatedLink = URL.createObjectURL(file); // Simulate a video link
         setLocalVideoLink(generatedLink);
-        setVideoLink(generatedLink);
       }, 3000); // Simulate 3 seconds upload time
 
       return () => clearTimeout(uploadTime);

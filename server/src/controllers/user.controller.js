@@ -39,7 +39,7 @@ const registerUser = asyncHandler(async (req, res) => {
   // check for user object creation
   // return response
 
-  const { fullName, email, channelName, password } = req.body;
+  const { fullName, email, channelName, password, country } = req.body;
   // console.log(fullName, email, channelName, password);
 
   if (
@@ -47,46 +47,63 @@ const registerUser = asyncHandler(async (req, res) => {
       (field) => field === undefined || field?.trim() === ""
     )
   ) {
-    throw new ApiError(400, "All fields are required");
+    throw new ApiError(400, "All fields are required"); // bad request
   }
 
-  const existedUser = await User.findOne({
-    $or: [{ channelName }, { email }],
-  });
-  // console.log(existedUser);
+  // try {
+    const existedUser = await User.findOne({
+      $or: [{ channelName }, { email }],
+    });
+    // console.log(existedUser);
 
-  if (existedUser) {
-    throw new ApiError(409, "User with email or channelname already exist");
-  }
+    if (existedUser) {
+      throw new ApiError(409, "User with email or channelname already exist"); // conflict
+    }
 
-  // console.log(req.files);
+    // console.log(req.files);
 
-  const avatarLocalPath = req.files?.avatar?.[0]?.path;
-  const coverImageLocalPath = req.files?.coverImage?.[0]?.path;
+    const avatarLocalPath = req.files?.avatar?.[0]?.path;
+    const coverImageLocalPath = req.files?.coverImage?.[0]?.path;
 
-  const avatar = await uploadOnCloudinary(avatarLocalPath);
-  const coverImage = await uploadOnCloudinary(coverImageLocalPath);
+    const avatar = await uploadOnCloudinary(
+      avatarLocalPath,
+      "video-streaming-platform/avatar"
+    );
+    const coverImage = await uploadOnCloudinary(
+      coverImageLocalPath,
+      "video-streaming-platform/cover-image"
+    );
 
-  const user = await User.create({
-    fullName,
-    avatar: avatar?.url || "",
-    coverImage: coverImage?.url || "",
-    email,
-    password,
-    channelName: channelName.toLowerCase(),
-  });
+    const user = await User.create({
+      fullName,
+      avatar: avatar?.url || "",
+      coverImage: coverImage?.url || "",
+      email,
+      password,
+      channelName: channelName.toLowerCase(),
+      country: country || "",
+    });
 
-  // extra db query
-  const createdUser = await User.findById(user._id).select(
-    "-password -refreshToken"
-  );
-  if (!createdUser) {
-    throw new ApiError(500, "Something went wrong while registering the user.");
-  }
+    // extra db query
+    const createdUser = await User.findById(user._id).select(
+      "-password -refreshToken"
+    );
+    if (!createdUser) {
+      throw new ApiError(
+        500,
+        "Something went wrong while registering the user."
+      ); // internal server error
+    }
 
-  return res
-    .status(201)
-    .json(new ApiResponse(200, createdUser, "Usr registered successfully."));
+    return res
+      .status(201)
+      .json(new ApiResponse(200, createdUser, "Usr registered successfully.")); // ok
+  // } catch (error) {
+    // throw new ApiError(
+      // error?.message || 500,
+      // error?.message || "Something went wrong while registering user."
+    // );
+  // }
 });
 
 const loginUser = asyncHandler(async (req, res) => {
@@ -99,17 +116,17 @@ const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   // console.log(email, password);
   if (!email) {
-    throw new ApiError(400, "Email is required.");
+    throw new ApiError(400, "Email is required."); // bad request
   }
 
   const user = await User.findOne({ email });
   if (!user) {
-    throw new ApiError(404, "User does not exist.");
+    throw new ApiError(404, "User does not exist."); // not found
   }
 
   const isPasswordValid = await user.isPasswordCorrect(password);
   if (!isPasswordValid) {
-    throw new ApiError(401, "Invalid user credentials.");
+    throw new ApiError(401, "Invalid user credentials."); // unauthorized
   }
 
   const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
@@ -148,30 +165,41 @@ const loginUser = asyncHandler(async (req, res) => {
 
 const logoutUser = asyncHandler(async (req, res) => {
   const id = req.user._id;
-  const updatedUser = await User.findByIdAndUpdate(
-    id,
-    {
-      $unset: {
-        refreshToken: 1,
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      {
+        $unset: {
+          refreshToken: 1,
+        },
       },
-    },
-    {
-      new: true,
+      {
+        new: true,
+      }
+    );
+
+    if (!updatedUser) {
+      throw new ApiError(404, "User not found");
     }
-  );
 
-  const options = {
-    httpOnly: true,
-    secure: true,
-  };
+    const options = {
+      httpOnly: true,
+      secure: true,
+    };
 
-  // console.log(updatedUser);
+    // console.log(updatedUser);
 
-  return res
-    .status(200)
-    .clearCookie("accessToken", options)
-    .clearCookie("refreshToken", options)
-    .json(new ApiResponse(200, {}, "User logged out"));
+    return res
+      .status(200)
+      .clearCookie("accessToken", options)
+      .clearCookie("refreshToken", options)
+      .json(new ApiResponse(200, {}, "User logged out"));
+  } catch (error) {
+    throw new ApiError(
+      error?.status || 500,
+      error?.message || "Something went wrong while logging out."
+    );
+  }
 });
 
 // To refresh the tokens if the access token expires, so the refresh token's timing could extend.
@@ -249,19 +277,28 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
       .status(200)
       .json(new ApiResponse(200, {}, "Password changed successfully."));
   } catch (error) {
-    throw new ApiError(401, error?.message || "Something went wrong.");
+    throw new ApiError(
+      error?.status || 500,
+      error?.message || "Something went wrong."
+    );
   }
 });
 
 const getCurrentUser = asyncHandler(async (req, res) => {
   try {
+    // console.log(req.user)
+    const user = req?.user;
     return res
       .status(200)
       .json(
-        new ApiResponse(200, req?.user, "Current user fetched successfully")
+        new ApiResponse(200, user, "Current user fetched successfully")
       );
   } catch (error) {
-    throw new ApiError(401, error?.message || "Something went wrong.");
+    throw new ApiError(
+      error?.status || 401,
+      error?.message ||
+        "Something went wrong while retrieving data of current user."
+    );
   }
 });
 
@@ -298,12 +335,16 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
         new ApiResponse(200, user, "Account details updated successfully.")
       );
   } catch (error) {
-    throw new ApiError(400, error?.message || "Something went wrong.");
+    throw new ApiError(
+      error?.status || 400,
+      error?.message || "Something went wrong while updating user details."
+    );
   }
 });
 
 const updateUserAvatar = asyncHandler(async (req, res, next) => {
   const avatarLocalPath = req.file?.path;
+  console.log(avatarLocalPath);
 
   if (!avatarLocalPath) {
     throw new ApiError(400, "Avatar file is missing.");
@@ -314,7 +355,7 @@ const updateUserAvatar = asyncHandler(async (req, res, next) => {
 
   const avatar = await uploadOnCloudinary(avatarLocalPath);
   if (!avatar?.url) {
-    throw new ApiError(400, "Error while uploading avatar.");
+    throw new ApiError(500, "Error while uploading avatar.");
   }
   const user = await User.findByIdAndUpdate(
     req.user?._id,
@@ -328,8 +369,13 @@ const updateUserAvatar = asyncHandler(async (req, res, next) => {
     }
   ).select("-password -refreshToken");
 
+  //! Need to check
   if (currentAvatarUrl) {
-    await deleteFromCloudinary(currentAvatarUrl);
+    const avatarPublicId = currentAvatarUrl.split("/").pop().split(".")[0];
+    await deleteFromCloudinary(
+      `video-streaming-platform/avatar/${avatarPublicId}`,
+      "image"
+    );
   }
 
   return res
@@ -349,7 +395,7 @@ const updateCoverImage = asyncHandler(async (req, res, next) => {
 
   const coverImage = await uploadOnCloudinary(coverImageLocalPath);
   if (!coverImage?.url) {
-    throw new ApiError(400, "Error while uploading cover image.");
+    throw new ApiError(500, "Error while uploading cover image.");
   }
   const user = await User.findByIdAndUpdate(
     req.user?._id,
@@ -363,8 +409,16 @@ const updateCoverImage = asyncHandler(async (req, res, next) => {
     }
   ).select("-password -refreshToken");
 
+  //! Need to check
   if (currentCoverImageUrl) {
-    await deleteFromCloudinary(currentCoverImageUrl);
+    const coverImagePublicId = currentCoverImageUrl
+      .split("/")
+      .pop()
+      .split(".")[0];
+    await deleteFromCloudinary(
+      `video-streaming-platform/avatar/${coverImagePublicId}`,
+      "image"
+    );
   }
 
   return res
@@ -433,7 +487,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
     ]);
 
     if (!channel?.length) {
-      throw new ApiError(400, "Channel does not exist.");
+      throw new ApiError(404, "Channel does not exist.");
     }
 
     return res
@@ -443,7 +497,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
       );
   } catch (error) {
     throw new ApiError(
-      401,
+      error?.status || 500,
       error?.message ||
         "Something went wrong while fetching the channel detail."
     );
@@ -506,7 +560,7 @@ const getWatchHistory = asyncHandler(async (req, res) => {
       );
   } catch (error) {
     throw new ApiError(
-      400,
+      error?.status || 500,
       error?.message || "Facing issue while fetching watch history."
     );
   }
@@ -560,18 +614,10 @@ const getUsersVideos = asyncHandler(async (req, res) => {
       );
   } catch (error) {
     throw new ApiError(
-      400,
+      error?.status || 500,
       error?.message || "Facing issue while fetching user's videos."
     );
   }
-});
-
-const subscribeUser = asyncHandler(async (req, res) => {
-  const { channelName } = req.params;
-  if (!channelName?.trim()) {
-    throw new ApiError(400, "Channel Name does not exist!");
-  }
-  const channel = await User.findOne({ channelName });
 });
 
 export {

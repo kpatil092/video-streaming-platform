@@ -1,15 +1,18 @@
 import React, { useCallback, useState, useEffect } from "react";
 import FileUploader from "@/components/FileUploader";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { postData } from "@/api/axios";
 
 const Create = () => {
   const [videoFile, setVideoFile] = useState(null);
   const [thumbnailFile, setThumbnailFile] = useState(null);
-  const [videoLink, setVideoLink] = useState(null);
   const [titleValue, setTitleValue] = useState("");
   const [descriptionValue, setDescriptionValue] = useState("");
   const [tagsValue, setTagsValue] = useState("");
   const [tags, setTags] = useState([]);
   const [isFormValid, setIsFormValid] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const titleWordLimit = 50,
     titleMaxLength = 250;
@@ -37,7 +40,8 @@ const Create = () => {
     const tagList = inputValue
       .split(/[,\s;]/)
       .map((tag) => tag.trim())
-      .filter((tag) => tag.startsWith("#") && tag.length <= 20);
+      .filter((tag) => tag.startsWith("#") && tag.length <= 20)
+      .map((tag) => tag.slice(1).toLowerCase());
     if (tagList.length <= 10) {
       setTagsValue(inputValue);
       setTags(tagList);
@@ -56,38 +60,53 @@ const Create = () => {
     setIsFormValid(
       titleValue.trim() &&
         descriptionValue &&
-        tags &&
+        tags.length > 0 &&
         videoFile &&
-        thumbnailFile &&
-        videoLink
+        thumbnailFile
     );
-  }, [titleValue, descriptionValue, tags, videoFile, thumbnailFile, videoLink]);
+  }, [titleValue, descriptionValue, tags, videoFile, thumbnailFile]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setIsUploading(true);
+
     const formData = new FormData();
     formData.append("title", titleValue);
     formData.append("description", descriptionValue);
     formData.append("tags", JSON.stringify(tags));
     formData.append("video", videoFile);
     formData.append("thumbnail", thumbnailFile);
-    formData.append("videoLink", videoLink);
 
     try {
-      // const response = await fetch("/api/upload", {
-      //   method: "POST",
-      //   body: formData,
-      // });
-      // console.log(formData.entries());
-      // const data = await response.json();
-      // console.log("Form submitted", data);
+      const response = await postData("video/upload-video", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log(response);
+      if (response.statusCode === 200) {
+        // const data = await response.json();
+        toast.success("Video uploaded successfully!");
+        // Reset form fields after successful upload
+        setTitleValue("");
+        setDescriptionValue("");
+        setTagsValue("");
+        setTags([]);
+        setVideoFile(null);
+        setThumbnailFile(null);
+      } else {
+        const errorData = await response.json();
+        toast.error(`Upload failed: ${errorData.message}`);
+      }
     } catch (error) {
-      console.error("Error uploading data", error);
+      toast.error("Error uploading data");
+    } finally {
+      setIsUploading(false);
     }
 
-    for (let [key, value] of formData.entries()) {
-      console.log(key, value);
-    }
+    // for (let [key, value] of formData.entries()) {
+    //   console.log(key, value);
+    // }
   };
 
   return (
@@ -164,7 +183,6 @@ const Create = () => {
                 accept="video/*"
                 file={videoFile}
                 type="video"
-                setVideoLink={setVideoLink}
               />
             </div>
             <div className="mb-4 w-full">
@@ -193,12 +211,13 @@ const Create = () => {
           <button
             type="submit"
             className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-6 w-30 rounded-lg cursor-pointer disabled:bg-gray-500 disabled:cursor-not-allowed"
-            disabled={!isFormValid}
+            disabled={!isFormValid || isUploading}
           >
-            Post
+            {isUploading ? "Uploading..." : "Post"}
           </button>
         </div>
       </form>
+      <ToastContainer position="top-right" autoClose={5000} />
     </div>
   );
 };
