@@ -4,6 +4,7 @@ import { upload } from "../middlewares/multer.middleware.js";
 import {
   deleteVideo,
   getVideoById,
+  getVideos,
   updateVideoDetails,
   uploadVideo,
 } from "../controllers/video.controller.js";
@@ -15,6 +16,7 @@ import {
 
 const router = Router();
 
+router.route("/videos").get(getVideos);
 router.route("/:id").get(getVideoById);
 
 //  secured routes
@@ -26,6 +28,7 @@ router.route("/upload-video").post(
   ]),
   uploadVideo
 );
+
 router.route("/:id").delete(verifyJWT, deleteVideo);
 router.route("/update/:id").patch(verifyJWT, updateVideoDetails);
 

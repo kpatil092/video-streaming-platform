@@ -1,112 +1,146 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
-import TextareaAutosize from "react-textarea-autosize";
+import { useLocation, useParams } from "react-router-dom";
+import VideoPlayer from "@/components/VideoPlayer";
+import { format } from "timeago.js";
+
+import { getData } from "@/api/axios";
 
 import VideoCard from "@/components/VideoCard";
 import Comments from "@/components/Comments";
 
-import 'video.js/dist/video-js.css';
-import videojs from 'video.js';
-
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import "video.js/dist/video-js.css";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
 
 import DownloadIcon from "@mui/icons-material/Download";
 import ShareIcon from "@mui/icons-material/Share";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import VideoPlayer from "@/components/VideoPlayer";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Video = () => {
-  const counts = 7;
+  const videoUrl =
+    "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8"; // Replace with your actual video URL
+  const [recommendedVideos, setRecommendedVideos] = useState([]);
+  const [video, setVideo] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const { id } = useParams();
+  const { isAuthenticated } = useAuth();
 
-  // const { pathname } = useLocation();
-  // useEffect(() => {
-  //   window.scrollTo({
-  //     top: 0,
-  //     left: 0,
-  //     behavior: "instant",
-  //   });
-  // }, [pathname]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const [videoRes, recommendedVideoRes] = await Promise.all([
+          getData(`/video/${id}`),
+          getData("/video/videos"),
+        ]);
+        setVideo(videoRes.data);
+        setRecommendedVideos(recommendedVideoRes.data.docs);
+        console.log(videoRes.data);
+      } catch (error) {
+        console.log("Error occur", error?.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  const [value, setValue] = useState("");
-  const wordLimit = 300; // Set your word limit here
-  const maxLen = 3000;
+    fetchData();
+    // return setRecommendedVideos([]);
+  }, []);
 
-  const handleChange = (e) => {
-    const inputValue = e.target.value;
-    const words = inputValue.split(/\s+/).filter(Boolean); // Split by spaces and filter out empty strings
-    if (words.length <= wordLimit && inputValue.length <= maxLen) {
-      setValue(inputValue);
-    } else if (inputValue.length > maxLen) {
-      // Limit reached
-      const trimmedValue = inputValue.slice(0, maxLen);
-      setValue(trimmedValue);
-    } else {
-      // Limit reached
-      const trimmedValue = words.slice(0, wordLimit).join(" ");
-      setValue(trimmedValue);
-    }
+  const formatTime = (t) => {
+    const h = Math.floor(t / 3600);
+    const m = Math.floor((t % 3600) / 60);
+    const s = t % 60;
+
+    const fhr = h.toString().padStart(2, "0");
+    const fmin = m.toString().padStart(2, "0");
+    const fsec = s.toString().padStart(2, "0");
+
+    return h > 0 ? `${fhr}:${fmin}:${fsec}` : `${fmin}:${fsec}`;
   };
-
-  const videoUrl = "https://www.taxmann.com/emailer/images/Incometax.mp4"; // Replace with your actual video URL
-  const videoTitle = "Sample Video Title"; // Replace with your actual video title
 
   return (
     <div className="px-4 flex flex-col xl:flex-row gap-5 my-5 w-full">
+      {/* Left Part */}
       <main className="flex flex-col flex-[2] gap-3">
-        <div className="flex justify-center w-full rounded-xl overflow-hidden"> 
-          {/* <img src="https://via.placeholder.com/900x500" alt="Video" className="rounded-2xl"/>    */}
-          <VideoPlayer videoUrl={videoUrl} title={videoTitle} />
+        <div className="flex justify-center items-center h-auto bg-gray-800 w-full rounded-xl overflow-hidden max-h-[450px]">
+          {isLoading ? (
+            <img src="https://via.placeholder.com/1000x700" />
+          ) : (
+            <VideoPlayer videoUrl={video.videoFile} />
+          )}
         </div>
         <h2 className="font-bold text-xl line-clamp-2">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam
-          minus totam reprehenderit provident culpa impedit. Eaque.
+          {video.title ||
+            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam minus totam reprehenderit provident culpa impedit. Eaque."}
         </h2>
         <div className="flex flex-col gap-2 justify-between items-center">
           <div className="flex gap-5 items-center justify-start w-full">
             <img
-              src="https://via.placeholder.com/48"
-              alt="Logo"
-              className="rounded-full"
+              src={
+                isLoading
+                  ? "https://via.placeholder.com/48"
+                  : video?.owner?.avatar || "https://via.placeholder.com/48"
+              }
+              className="rounded-full h-14 w-14 object-cover"
             />
             <div>
-              <h1 className="text-md font-semibold">Channel Name CH1</h1>
+              <h1 className="text-md font-semibold">
+                {video?.owner?.channelName || "Channel Name CH1"}
+              </h1>
               <p className="text-xs">8.88 lakh subscriber</p>
             </div>
-            <Button className="rounded-3xl">Subscribe</Button>
+            <Button
+              className="rounded-3xl disabled:cursor-not-allowed"
+              disabled={!isAuthenticated}
+            >
+              Subscribe
+            </Button>
           </div>
           <div className="flex gap-5 items-center w-full">
             <div>
-              <Button className="text-black bg-gray-200 hover:bg-gray-300 rounded-l-full rounded-r-none p-2">
+              <Button
+                className="text-black bg-gray-200 hover:bg-gray-300 rounded-l-full rounded-r-none p-2"
+                disabled={!isAuthenticated}
+              >
                 <span>
                   <ThumbUpOffAltIcon className="font-extrathin text-sm" />
                 </span>
-                <span>1.2K</span>
+                <span>{video.likesCount || "1.2K"}</span>
               </Button>
-              <Button className="text-black bg-gray-200 hover:bg-gray-300 rounded-r-full rounded-l-none border-l-[0.5px] border-gray-300 p-2">
+              <Button
+                className="text-black bg-gray-200 hover:bg-gray-300 rounded-r-full rounded-l-none border-l-[0.5px] border-gray-300 p-2"
+                disabled={!isAuthenticated}
+              >
                 <span>
                   <ThumbDownOffAltIcon className="font-extrathin text-sm" />
                 </span>
               </Button>
             </div>
-            <Button className="flex gap-1 text-black bg-gray-200 hover:bg-gray-300 rounded-full p-2 ">
+            <Button
+              className="flex gap-1 text-black bg-gray-200 hover:bg-gray-300 rounded-full p-2 "
+              disabled={!isAuthenticated}
+            >
               <span>
                 <ShareIcon className="font-extrathin text-sm" />
               </span>
               <span>Share</span>
             </Button>
-            <Button className="flex gap-1 text-black bg-gray-200 hover:bg-gray-300 rounded-full p-2">
+            <Button
+              className="flex gap-1 text-black bg-gray-200 hover:bg-gray-300 rounded-full p-2"
+              disabled={!isAuthenticated}
+            >
               <span>
                 <DownloadIcon className="font-extrathin text-sm" />
               </span>
               <span>Download</span>
             </Button>
-            <Button className="flex gap-1 text-black bg-gray-200 hover:bg-gray-300 rounded-full p-2">
+            <Button
+              className="flex gap-1 text-black bg-gray-200 hover:bg-gray-300 rounded-full p-2"
+              disabled={!isAuthenticated}
+            >
               <span>
                 <MoreHorizIcon className="text-xs" />
               </span>
@@ -114,9 +148,78 @@ const Video = () => {
           </div>
         </div>
         <div className="bg-gray-200 rounded-2xl p-3">
-          <p className="font-semibold">1.7 lakh views • 2 weeks ago</p>
+          <p className="font-semibold">
+            {video?.view || "1.7 lakh"} views •{" "}
+            {format(video?.createdAt) || "2 weeks ago"}
+          </p>
           <div className="text-md">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi
+            <div>{video?.description}</div>
+            <div className="flex gap-2">
+              {video?.tags?.map((tag) => (
+                <span className="italic text-blue-500 text-sm">{"#" + tag}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+        {/* Comments Section */}
+        <div className="w-full">
+          <Comments />
+        </div>
+      </main>
+
+      {/* Right part */}
+      <div
+        className="flex-1 px-2 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 gap-4 items-start"
+        style={{ gridAutoRows: "min-content" }}
+      >
+        {isLoading ? (
+          <h1 className="mx-auto text-2xl">Loading...</h1>
+        ) : (
+          recommendedVideos.map((video) => (
+            <VideoCard
+              key={video._id || index}
+              id={video._id || 1}
+              thumbnail={
+                video.thumbnail || "https://via.placeholder.com/640x360"
+              }
+              channelLogo={video.avatar || "https://via.placeholder.com/48"} //avatar
+              title={
+                video.title ||
+                "Hey Guys! welcome to my Youtube Channel | By John Doe and friends | First Youtube video"
+              }
+              channelName={video.channelName || "Channel Name"}
+              views={video.views || "3.5 lakh"}
+              uploadTime={format(video.createdAt) || "1 year ago"}
+              videoLength={formatTime(parseInt(video.duration)) || "3:00:00"}
+              small={true}
+            />
+          ))
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Video;
+
+{
+  /* {Array.from({ length: 10 }, (_, index) => (
+          <VideoCard
+            key={index}
+            thumbnail="https://via.placeholder.com/640x360"
+            channelLogo="https://via.placeholder.com/48"
+            title="Hey Guys! welcome to my Youtube Channel | By John Doe and friends | First Youtube video"
+            channelName="Channel Name"
+            views="3.5 lakh"
+            uploadTime="1 year ago"
+            videoLength="3:00:00"
+            small={true}
+          />
+        ))} */
+}
+
+/*
+Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi
             ducimus dolores, nihil earum repellendus placeat iste. Similique
             libero aliquam debitis dolorum perspiciatis ad officiis quia aut
             blanditiis hic, adipisci aperiam nesciunt possimus reprehenderit
@@ -155,75 +258,5 @@ const Video = () => {
             sapiente quas sint a eligendi in necessitatibus iure fugit, aperiam
             officiis. 1. Lorem ipsum dolor sit amet consectetur adipisicing
             elit. Earum autem labore deserunt est sapiente quas sint a eligendi
-            in necessitatibus iure fugit, aperiam officiis. 1. Lorem ipsum dolor
-            sit amet consectetur adipisicing elit. Earum autem labore deserunt
-            est sapiente quas sint a eligendi in necessitatibus iure fugit,
-            aperiam officiis.
-          </div>
-        </div>
-        {/* Comments Section */}
-        <div className="flex flex-col gap-3 w-full pt-3">
-          <div className="flex gap-10">
-            <h2 className="font-bold text-xl">{counts} Comments</h2>
-            {/* <Button className="text-s font-semibold bg-transparent p-0 h-auto hover:bg-transparent">
-              ⫸ Sort by
-            </Button> */}
-          </div>
-          <div className="flex gap-2">
-            <div className="flex space-x-4">
-              <Avatar>
-                <AvatarImage src="https://github.com/shadcn.png" />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
-            </div>
-            <div className="flex flex-col gap-2 w-full">
-              <TextareaAutosize
-                id="autoResizingTextarea"
-                placeholder="Add a comment..."
-                maxRows={8}
-                value={value}
-                onChange={handleChange}
-                className="mt-1 p-2 border-t-0 border-x-0 border-b-[1.5px] bg-transparent border-gray-400 w-full focus:outline-none focus:border-gray-800 resize-none transition-colors"
-              />
-              <div className="flex justify-end gap-7">
-                <Button className="rounded-full h-auto text-sm text-black bg-gray-200 hover:bg-gray-300 border-gray-300 border-[0.5px] ">
-                  Cancel
-                </Button>
-                <Button className="rounded-full h-auto text-white bg-gray-800 hover:bg-gray-700 border-gray-1000 border-[0.5px]">
-                  Comment
-                </Button>
-              </div>
-            </div>
-          </div>
-          <Separator />
-          <div className="flex justify-center pt-2 flex-col gap-4">
-            {counts
-              ? Array.from({ length: counts }, (_, index) => (
-                  <div key={index}>
-                    <Comments />
-                  </div>
-                ))
-              : "No comments yet"}
-          </div>
-        </div>
-      </main>
-      <div className="flex-1 px-2 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 gap-4">
-        {Array.from({ length: 20 }, (_, index) => (
-          <VideoCard
-            key={index}
-            thumbnail="https://via.placeholder.com/640x360"
-            channelLogo="https://via.placeholder.com/48"
-            title="Hey Guys! welcome to my Youtube Channel | By John Doe and friends | First Youtube video"
-            channelName="Channel Name"
-            views="3.5 lakh"
-            uploadTime="1 year ago"
-            videoLength="3:00:00"
-            small={true}
-          />
-        ))}
-      </div>
-    </div>
-  );
-};
-
-export default Video;
+            in necessitatibus iure fugit, aperiam officiis.
+            */

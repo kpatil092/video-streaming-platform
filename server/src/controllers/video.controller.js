@@ -160,4 +160,73 @@ const updateVideoDetails = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, video, "Video details updated successfully."));
 });
 
-export { uploadVideo, getVideoById, deleteVideo, updateVideoDetails };
+const getVideos = asyncHandler(async (req, res) => {
+  const { page = 1, limit = 24 } = req.query;
+
+  try {
+    const options = {
+      page: parseInt(page, 10),
+      limit: parseInt(limit, 10),
+    };
+
+    const aggregateQuery = Video.aggregate([
+      {
+        $match: {
+          isPublished: true,
+        },
+      },
+      {
+        $sort: {
+          createdAt: -1,
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "owner",
+          foreignField: "_id",
+          as: "owner",
+        },
+      },
+      {
+        $unwind: "$owner",
+      },
+      {
+        $addFields: {
+          channelName: "$owner.channelName",
+          avatar: "$owner.avatar",
+        },
+      },
+      {
+        $project: {
+          videoFile: 1,
+          thumbnail: 1,
+          title: 1,
+          duration: 1,
+          tags: 1,
+          views: 1,
+          isPublished: 1,
+          createdAt: 1,
+          channelName: 1,
+          avatar: 1,
+        },
+      },
+    ]);
+
+    const videos = await Video.aggregatePaginate(aggregateQuery, options);
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, videos, "Videos fetched successfully."));
+  } catch (error) {
+    throw new ApiError(500, error.message || "Error fetching videos.");
+  }
+});
+
+export {
+  uploadVideo,
+  getVideoById,
+  deleteVideo,
+  updateVideoDetails,
+  getVideos,
+};
