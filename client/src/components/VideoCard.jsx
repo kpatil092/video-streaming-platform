@@ -35,7 +35,7 @@ const VideoCard = ({
         {!small && (
           <img
             className="w-12 h-12 rounded-full mr-4 object-cover"
-            src={channelLogo}
+            src={channelLogo || "https://via.placeholder.com/48"}
             alt="Channel Logo"
           />
         )}

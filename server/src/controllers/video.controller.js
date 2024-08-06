@@ -7,6 +7,7 @@ import {
 } from "../utils/cloudinary.js";
 import { Video } from "../models/video.model.js";
 import mongoose from "mongoose";
+import { Comment } from "../models/comment.model.js";
 
 const uploadVideo = asyncHandler(async (req, res) => {
   const { title, description, tags } = req.body;
@@ -45,6 +46,7 @@ const uploadVideo = asyncHandler(async (req, res) => {
       description,
       duration: videoObj?.duration, // You can extract and set duration if needed
       tags: tags.split(","),
+      // tags: JSON.parse(tags),
       owner: req.user._id,
     });
 
@@ -60,8 +62,8 @@ const uploadVideo = asyncHandler(async (req, res) => {
 });
 
 const getVideoById = asyncHandler(async (req, res) => {
-  // get ID , (verified not important)
   const { id } = req.params;
+
   // Validate the video ID
   if (!id || !mongoose.Types.ObjectId.isValid(id)) {
     throw new ApiError(400, "Invalid video ID.");
@@ -77,10 +79,25 @@ const getVideoById = asyncHandler(async (req, res) => {
       throw new ApiError(404, "Video not found.");
     }
 
+    // Get the count of comments on the video
+    const commentCount = await Comment.countDocuments({ video: id });
+
+    // Add the comment count to the video object
+    const videoWithCommentCount = {
+      ...video._doc,
+      commentCount,
+    };
+
     // Send response to the client
     res
       .status(200)
-      .json(new ApiResponse(200, video, "Video details fetched successfully."));
+      .json(
+        new ApiResponse(
+          200,
+          videoWithCommentCount,
+          "Video details fetched successfully."
+        )
+      );
   } catch (error) {
     throw new ApiError(500, error.message || "Error fetching video details.");
   }
@@ -139,7 +156,7 @@ const updateVideoDetails = asyncHandler(async (req, res) => {
   const updateFields = {};
   if (title !== undefined) updateFields.title = title;
   if (description !== undefined) updateFields.description = description;
-  if (tags !== undefined) updateFields.tags = tags;
+  if (tags !== undefined) updateFields.tags = tags.split(",");
 
   const video = await Video.findByIdAndUpdate(
     id,

@@ -1,29 +1,31 @@
 import React, { useRef } from "react";
+
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
+
 import KeyboardArrowLeftOutlinedIcon from "@mui/icons-material/KeyboardArrowLeftOutlined";
 import KeyboardArrowRightOutlinedIcon from "@mui/icons-material/KeyboardArrowRightOutlined";
 
 const ScrollablePanel = () => {
   const labels = [
+    "Motivation",
+    "Enthusiam",
+    "Sports",
+    "Enjoy",
+    "Study",
+    "Growth",
+    "Finance",
+    "Olympics",
+    "Prank",
+    "Developement",
+    "Practice",
+    "Project",
+    "Women",
+    "Dignity",
+    "Russia",
     "Ketan Patil",
-    "Ketan Patil",
-    "Ketan Patil",
-    "Ketan Patil",
-    "Ketan Patil",
-    "Ketan Patil",
-    "Ketan Patil",
-    "Ketan Patil",
-    "Ketan Patil",
-    "Ketan Patil",
-    "Ketan Patil",
-    "Ketan Patil",
-    "Ketan Patil",
-    "Ketan Patil",
-    "Ketan Patil",
-    "Ketan Patil",
-    "Ketan Patil",
-    "Ketan Patil",
+    "Narendra Modi",
+    "Mumbai",
   ];
 
   const scrollContainerRef = useRef(null);
@@ -70,7 +72,7 @@ const ScrollablePanel = () => {
         ))}
       </div>
       <Button
-        onClick={scrollLeft}
+        onClick={scrollRight}
         className="bg-gray-100 hover:bg-gray-300 p-2 rounded-full focus:outline-none text-black cursor-pointer"
       >
         <KeyboardArrowRightOutlinedIcon />

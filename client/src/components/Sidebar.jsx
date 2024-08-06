@@ -1,15 +1,18 @@
 // src/components/Sidebar.jsx
 import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
+
 import { Separator } from "./ui/separator";
+
 import { ScreenWidth } from "@/assets/Constant";
+import { useAuth } from "@/contexts/AuthContext";
 import { useSidebarMessage } from "@/contexts/SidebarContext";
+
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import FilterCenterFocusOutlinedIcon from "@mui/icons-material/FilterCenterFocusOutlined";
 import VideocamOutlinedIcon from "@mui/icons-material/VideocamOutlined";
 import SubscriptionsOutlinedIcon from "@mui/icons-material/SubscriptionsOutlined";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-
 import PortraitIcon from "@mui/icons-material/Portrait";
 import HistoryIcon from "@mui/icons-material/History";
 import PlaylistPlayIcon from "@mui/icons-material/PlaylistPlay";
@@ -17,7 +20,6 @@ import WatchLaterIcon from "@mui/icons-material/WatchLater";
 import TocIcon from "@mui/icons-material/Toc";
 import SettingsIcon from "@mui/icons-material/Settings";
 import FlagIcon from "@mui/icons-material/Flag";
-import { useAuth } from "@/contexts/AuthContext";
 
 const categories = [
   [
@@ -37,7 +39,7 @@ const categories = [
     {
       name: "Your Channel",
       id: 4,
-      path: "/mychannel",
+      path: "/channel",
       icon: () => <PortraitIcon />,
     },
   ],

@@ -1,10 +1,12 @@
 // src/components/Layout.jsx
 import React from "react";
 import { Outlet } from "react-router-dom";
+
 import Header from "./Header";
 import Sidebar from "./Sidebar";
-import { SidebarMessageProvider } from "@/contexts/SidebarContext";
 import ScrollToTop from "./ScrollToTop";
+
+import { SidebarMessageProvider } from "@/contexts/SidebarContext";
 
 const Layout = ({ children }) => {
   return (

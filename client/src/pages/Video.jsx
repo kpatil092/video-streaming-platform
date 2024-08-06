@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
-import VideoPlayer from "@/components/VideoPlayer";
+
 import { format } from "timeago.js";
 
 import { getData } from "@/api/axios";
+import { useAuth } from "@/contexts/AuthContext";
 
 import VideoCard from "@/components/VideoCard";
 import Comments from "@/components/Comments";
 
+import VideoPlayer from "@/components/VideoPlayer";
 import "video.js/dist/video-js.css";
 import { Button } from "@/components/ui/button";
 
@@ -16,16 +18,14 @@ import ShareIcon from "@mui/icons-material/Share";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import { useAuth } from "@/contexts/AuthContext";
+
 
 const Video = () => {
-  const videoUrl =
-    "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8"; // Replace with your actual video URL
   const [recommendedVideos, setRecommendedVideos] = useState([]);
   const [video, setVideo] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const { id } = useParams();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, currentUser } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,7 +37,7 @@ const Video = () => {
         ]);
         setVideo(videoRes.data);
         setRecommendedVideos(recommendedVideoRes.data.docs);
-        console.log(videoRes.data);
+        // console.log(videoRes.data);
       } catch (error) {
         console.log("Error occur", error?.message);
       } finally {
@@ -47,7 +47,7 @@ const Video = () => {
 
     fetchData();
     // return setRecommendedVideos([]);
-  }, []);
+  }, [id]);
 
   const formatTime = (t) => {
     const h = Math.floor(t / 3600);
@@ -72,7 +72,7 @@ const Video = () => {
             <VideoPlayer videoUrl={video.videoFile} />
           )}
         </div>
-        <h2 className="font-bold text-xl line-clamp-2">
+        <h2 className="font-bold text-xl">
           {video.title ||
             "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam minus totam reprehenderit provident culpa impedit. Eaque."}
         </h2>
@@ -94,7 +94,9 @@ const Video = () => {
             </div>
             <Button
               className="rounded-3xl disabled:cursor-not-allowed"
-              disabled={!isAuthenticated}
+              disabled={
+                !isAuthenticated || video?.owner?._id === currentUser._id
+              }
             >
               Subscribe
             </Button>
@@ -155,15 +157,17 @@ const Video = () => {
           <div className="text-md">
             <div>{video?.description}</div>
             <div className="flex gap-2">
-              {video?.tags?.map((tag) => (
-                <span className="italic text-blue-500 text-sm">{"#" + tag}</span>
+              {video?.tags?.map((tag, index) => (
+                <span key={index} className="italic text-blue-500 text-sm">
+                  {"#" + tag}
+                </span>
               ))}
             </div>
           </div>
         </div>
         {/* Comments Section */}
         <div className="w-full">
-          <Comments />
+          <Comments commentCount={video.commentCount} />
         </div>
       </main>
 
@@ -175,25 +179,27 @@ const Video = () => {
         {isLoading ? (
           <h1 className="mx-auto text-2xl">Loading...</h1>
         ) : (
-          recommendedVideos.map((video) => (
-            <VideoCard
-              key={video._id || index}
-              id={video._id || 1}
-              thumbnail={
-                video.thumbnail || "https://via.placeholder.com/640x360"
-              }
-              channelLogo={video.avatar || "https://via.placeholder.com/48"} //avatar
-              title={
-                video.title ||
-                "Hey Guys! welcome to my Youtube Channel | By John Doe and friends | First Youtube video"
-              }
-              channelName={video.channelName || "Channel Name"}
-              views={video.views || "3.5 lakh"}
-              uploadTime={format(video.createdAt) || "1 year ago"}
-              videoLength={formatTime(parseInt(video.duration)) || "3:00:00"}
-              small={true}
-            />
-          ))
+          recommendedVideos
+            .filter((video) => video._id != id)
+            .map((video, index) => (
+              <VideoCard
+                key={video._id || index}
+                id={video._id || 1}
+                thumbnail={
+                  video.thumbnail || "https://via.placeholder.com/640x360"
+                }
+                channelLogo={video.avatar || "https://via.placeholder.com/48"} //avatar
+                title={
+                  video.title ||
+                  "Hey Guys! welcome to my Youtube Channel | By John Doe and friends | First Youtube video"
+                }
+                channelName={video.channelName || "Channel Name"}
+                views={video.views || "3.5 lakh"}
+                uploadTime={format(video.createdAt) || "1 year ago"}
+                videoLength={formatTime(parseInt(video.duration)) || "3:00:00"}
+                small={true}
+              />
+            ))
         )}
       </div>
     </div>
@@ -260,3 +266,5 @@ Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi
             elit. Earum autem labore deserunt est sapiente quas sint a eligendi
             in necessitatibus iure fugit, aperiam officiis.
             */
+
+// const videoUrl = "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8";

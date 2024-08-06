@@ -16,7 +16,7 @@ import SignUp from "./pages/SignUp";
 import { AuthProvider } from "./contexts/AuthContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-const channelName = "mychannel";
+const channelName = "channel";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -36,9 +36,9 @@ const App = () => {
   const queryClient = new QueryClient();
   return (
     <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
     </QueryClientProvider>
   );
 };

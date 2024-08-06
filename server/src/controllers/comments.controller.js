@@ -146,13 +146,19 @@ const getVideoComments = asyncHandler(async (req, res) => {
         $unwind: "$user",
       },
       {
+        $addFields: {
+          channelName: "$user.channelName",
+          avatar: "$user.avatar",
+        },
+      },
+      {
         $project: {
           content: 1,
           likeCount: 1,
           unlikeCount: 1,
           createdAt: 1,
-          "user.channelName": 1,
-          "user.avatar": 1,
+          channelName: 1,
+          avatar: 1,
         },
       },
     ]);
@@ -166,7 +172,6 @@ const getVideoComments = asyncHandler(async (req, res) => {
     throw new ApiError(500, error.message || "Error fetching comments.");
   }
 });
-
 
 //! Not checked yet
 const deleteComment = asyncHandler(async (req, res) => {

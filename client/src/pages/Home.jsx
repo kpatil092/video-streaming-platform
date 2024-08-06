@@ -23,8 +23,9 @@ const Home = () => {
       queryKey: ["videos"],
       queryFn: async ({ pageParam = 1 }) => {
         const response = await getData(
-          `/video/videos?page=${pageParam}&limit=12`
+          `/video/videos?page=${pageParam}&limit=6`
         );
+        // console.log(response.data)
         return response.data;
       },
       getNextPageParam: (lastPage, pages) => {
@@ -80,7 +81,7 @@ const Home = () => {
                 thumbnail={
                   video.thumbnail || "https://via.placeholder.com/640x360"
                 }
-                channelLogo={video.avatar || "https://via.placeholder.com/48"} //avatar
+                channelLogo={video?.avatar || "https://via.placeholder.com/48"} //avatar
                 title={
                   video.title ||
                   "Hey Guys! welcome to my Youtube Channel | By John Doe and friends | First Youtube video"

@@ -1,17 +1,16 @@
 // src/components/Header.jsx
 import React, { useState } from "react";
-
-import { useSidebarMessage } from "@/contexts/SidebarContext";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 
 import Searchbar from "./Searchbar";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import MenuIcon from "@mui/icons-material/Menu";
-import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
-import { Button } from "./ui/button";
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { postData } from "@/api/axios";
+
+import { useSidebarMessage } from "@/contexts/SidebarContext";
 import { useAuth } from "@/contexts/AuthContext";
 
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "./ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,25 +20,33 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import MenuIcon from "@mui/icons-material/Menu";
+import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import PersonIcon from "@mui/icons-material/Person";
 import LiveTvIcon from "@mui/icons-material/LiveTv";
 import CreateIcon from "@mui/icons-material/Create";
 import LogoutIcon from "@mui/icons-material/Logout";
 import SettingsIcon from "@mui/icons-material/Settings";
 import FlagIcon from "@mui/icons-material/Flag";
-import { postData } from "@/api/axios";
+
+
 
 const Header = () => {
-  const { setSidebarToggle } = useSidebarMessage();
-  const { pathname } = useLocation();
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  
   const navigate = useNavigate();
+
+  const { setSidebarToggle } = useSidebarMessage();
+  const { pathname } = useLocation();
+  const { isAuthenticated, currentUser } = useAuth();
+
+  const isAuthPage = pathname === "/sign-in" || pathname === "/sign-up";
 
   const handleLogout = async (e) => {
     setLoading(true);
     setError("");
-
     try {
       const response = await postData("/users/logout");
       // console.log(response);
@@ -52,13 +59,6 @@ const Header = () => {
       setLoading(false);
     }
   };
-
-  const { isAuthenticated, currentUser } = useAuth();
-  // console.log(currentUser);
-  // const isAuthenticated = true;
-  // console.log(isAuthenticated);
-
-  const isAuthPage = pathname === "/sign-in" || pathname === "/sign-up";
 
   return (
     <header className="bg-gray-100 text-black px-6 py-3 flex items-center justify-between border-b-[2px] w-full">
@@ -105,30 +105,43 @@ const Header = () => {
                 </Avatar>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="absolute right-1 flex flex-col w-full">
-                <DropdownMenuLabel className="text-base font-bold">
-                  My Account
+                <DropdownMenuLabel className=" flex flex-col">
+                  <div className="text-base font-bold">My Account</div>
+                  <div className="text-sm italic text-gray-900 font-semibold">
+                    {"@" + currentUser?.channelName}
+                  </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="flex gap-3 text-base">
-                  <PersonIcon /> Profile
-                </DropdownMenuItem>
-                <DropdownMenuItem className="flex gap-3 text-base">
-                  <LiveTvIcon />
-                  My Channel
-                </DropdownMenuItem>
-                <DropdownMenuItem className="flex gap-3 text-base">
-                  <CreateIcon />
-                  Create
-                </DropdownMenuItem>
+                <Link to="/channel/profile">
+                  <DropdownMenuItem className="flex gap-3 text-base">
+                    <PersonIcon /> Profile
+                  </DropdownMenuItem>
+                </Link>
+                <Link to="/channel">
+                  <DropdownMenuItem className="flex gap-3 text-base">
+                    <LiveTvIcon />
+                    My Channel
+                  </DropdownMenuItem>
+                </Link>
+                <Link to="/channel/upload">
+                  <DropdownMenuItem className="flex gap-3 text-base">
+                    <CreateIcon />
+                    Create
+                  </DropdownMenuItem>
+                </Link>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="flex gap-3 text-base">
-                  <SettingsIcon />
-                  Settings
-                </DropdownMenuItem>
-                <DropdownMenuItem className="flex gap-3 text-base">
-                  <FlagIcon />
-                  Report
-                </DropdownMenuItem>
+                <Link to="/setting">
+                  <DropdownMenuItem className="flex gap-3 text-base">
+                    <SettingsIcon />
+                    Settings
+                  </DropdownMenuItem>
+                </Link>
+                <Link to="/report">
+                  <DropdownMenuItem className="flex gap-3 text-base">
+                    <FlagIcon />
+                    Report
+                  </DropdownMenuItem>
+                </Link>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="flex gap-3 text-base"

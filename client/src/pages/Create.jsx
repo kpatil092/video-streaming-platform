@@ -10,7 +10,7 @@ const Create = () => {
   const [titleValue, setTitleValue] = useState("");
   const [descriptionValue, setDescriptionValue] = useState("");
   const [tagsValue, setTagsValue] = useState("");
-  const [tags, setTags] = useState([]);
+  const [tags, setTags] = useState("");
   const [isFormValid, setIsFormValid] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -44,7 +44,7 @@ const Create = () => {
       .map((tag) => tag.slice(1).toLowerCase());
     if (tagList.length <= 10) {
       setTagsValue(inputValue);
-      setTags(tagList);
+      setTags(tagList.join(","));
     }
   };
 
