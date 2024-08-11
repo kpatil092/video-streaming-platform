@@ -37,19 +37,19 @@ const userSchema = new Schema(
     coverImage: {
       type: String, // cloudinary
     },
-    watchHistory: [
+    watchHistory: [    
       {
         type: Schema.Types.ObjectId,
         ref: "Video",
       },
     ],
-    comments: [
+    comments: [   //! not required?
       {
         type: Schema.Types.ObjectId,
         ref: "Comments",
       },
     ],
-    likedVideo: [
+    likedVideo: [    //! not required?
       {
         type: Schema.Types.ObjectId,
         ref: "Video",

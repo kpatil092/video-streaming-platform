@@ -16,7 +16,7 @@ const SignIn = () => {
     setError("");
 
     try {
-      const response = await postData("/users/login", {
+      const response = await postData("/auth/login", {
         email,
         password,
       });
@@ -24,10 +24,7 @@ const SignIn = () => {
       // console.log(response)
 
       if (response.statusCode === 200) {
-        // Cookies.set("accessToken", accessToken, { expires: 1 }); // Expires in 1 day
-        // Cookies.set("refreshToken", refreshToken, { expires: 7 }); // Expires in 7 days
-
-        const from = location.state?.from?.pathname || "/";
+        const from = location.state?.from?.pathname || "/home";
         navigate(from, { replace: true });
         window.location.reload();
       } else {

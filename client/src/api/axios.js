@@ -32,7 +32,7 @@ axiosInstance.interceptors.response.use(
 
         if (refreshTokenExists.data.exists) {
           // If refresh token exists, refresh the tokens
-          const { data } = await axiosInstance.post("/users/refresh-tokens");
+          const { data } = await axiosInstance.post("/auth/refresh-tokens");
 
           // console.error('Server Response Error3:', error.response);
           // Retry the original request with the new access token
@@ -45,7 +45,7 @@ axiosInstance.interceptors.response.use(
         console.error("Refresh token request failed", refreshError);
 
         // Remove the tokens from cookies (handled by backend)
-        await axiosInstance.post("/users/logout");
+        await axiosInstance.post("/auth/logout");
 
         // Optional: Redirect to login page or handle logout
         // window.location.href = '/sign-in';

@@ -29,7 +29,7 @@ const videoSchema = new Schema(
     tags: [
       {
         type: String,
-        required: true,
+        
       },
     ],
     views: {
@@ -57,7 +57,7 @@ const videoSchema = new Schema(
       type: Number,
       default: 0,
     },
-    comments: [
+    comments: [   //! not required?
       {
         type: Schema.Types.ObjectId,
         ref: "Comment",
@@ -66,6 +66,8 @@ const videoSchema = new Schema(
   },
   { timestamps: true }
 );
+
+// videoSchema.index({title: "text", tags: "text"});
 
 videoSchema.plugin(mongooseAggregatePaginate);
 

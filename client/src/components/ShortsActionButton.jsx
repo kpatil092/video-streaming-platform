@@ -37,9 +37,9 @@ const ShortsActionButtons = () => {
         <span className="ml-2">Share</span>
       </div>
       <div className="flex flex-col justify-center">
-        <Button className="flex items-center rounded-full w-12 h-12 bg-gray-100 text-black hover:bg-gray-300">
+        <span className="flex items-center justify-center rounded-full w-12 h-12 bg-gray-100 text-black hover:bg-gray-300">
           <PopoverMenu />
-        </Button>
+        </span>
       </div>
       <div className="">
         <img

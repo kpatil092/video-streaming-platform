@@ -3,7 +3,7 @@ import { useLocation, useParams } from "react-router-dom";
 
 import { format } from "timeago.js";
 
-import { getData } from "@/api/axios";
+import { getData, postData } from "@/api/axios";
 import { useAuth } from "@/contexts/AuthContext";
 
 import VideoCard from "@/components/VideoCard";
@@ -18,12 +18,13 @@ import ShareIcon from "@mui/icons-material/Share";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-
+import PopoverMenu from "@/components/PopoverMenu";
 
 const Video = () => {
   const [recommendedVideos, setRecommendedVideos] = useState([]);
   const [video, setVideo] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubscribed, setIsSubscribed] = useState(false);
   const { id } = useParams();
   const { isAuthenticated, currentUser } = useAuth();
 
@@ -32,11 +33,14 @@ const Video = () => {
       try {
         setIsLoading(true);
         const [videoRes, recommendedVideoRes] = await Promise.all([
-          getData(`/video/${id}`),
+          isAuthenticated
+            ? getData(`/video/${id}?userId=${currentUser._id}`)
+            : getData(`/video/${id}`),
           getData("/video/videos"),
         ]);
         setVideo(videoRes.data);
         setRecommendedVideos(recommendedVideoRes.data.docs);
+        setIsSubscribed(videoRes.data.isSubscribed); //
         // console.log(videoRes.data);
       } catch (error) {
         console.log("Error occur", error?.message);
@@ -46,8 +50,31 @@ const Video = () => {
     };
 
     fetchData();
-    // return setRecommendedVideos([]);
   }, [id]);
+
+  const handleSubscribe = async () => {
+    try {
+      const response = await postData(`/users/subscribe/${video.owner._id}`);
+      if (response.statusCode === 200) {
+        setIsSubscribed(true);
+      }
+      // console.log(response);
+    } catch (error) {
+      console.log("Subscription error", error?.message);
+    }
+  };
+
+  const handleUnsubscribe = async () => {
+    try {
+      const response = await postData(`/users/unsubscribe/${video.owner._id}`);
+      if (response.statusCode === 200) {
+        setIsSubscribed(false);
+      }
+      // console.log(response);
+    } catch (error) {
+      console.log("Unsubscription error", error?.message);
+    }
+  };
 
   const formatTime = (t) => {
     const h = Math.floor(t / 3600);
@@ -65,14 +92,17 @@ const Video = () => {
     <div className="px-4 flex flex-col xl:flex-row gap-5 my-5 w-full">
       {/* Left Part */}
       <main className="flex flex-col flex-[2] gap-3">
-        <div className="flex justify-center items-center h-auto bg-gray-800 w-full rounded-xl overflow-hidden max-h-[450px]">
-          {isLoading ? (
-            <img src="https://via.placeholder.com/1000x700" />
-          ) : (
-            <VideoPlayer videoUrl={video.videoFile} />
-          )}
+        <div className="relative w-full pb-[56.25%] bg-gray-900 rounded-xl overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-full">
+            {isLoading ? (
+              <img src="https://via.placeholder.com/1000x700" />
+            ) : (
+              <VideoPlayer videoUrl={video.videoFile} />
+            )}
+          </div>
         </div>
-        <h2 className="font-bold text-xl">
+
+        <h2 className="font-bold text-base md:text-lg lg:text-xl">
           {video.title ||
             "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam minus totam reprehenderit provident culpa impedit. Eaque."}
         </h2>
@@ -84,25 +114,26 @@ const Video = () => {
                   ? "https://via.placeholder.com/48"
                   : video?.owner?.avatar || "https://via.placeholder.com/48"
               }
-              className="rounded-full h-14 w-14 object-cover"
+              className="rounded-full h-10 w-10 md:h-14 md:w-14 object-cover"
             />
             <div>
-              <h1 className="text-md font-semibold">
+              <h1 className="text-sm md:text-base font-semibold">
                 {video?.owner?.channelName || "Channel Name CH1"}
               </h1>
-              <p className="text-xs">8.88 lakh subscriber</p>
+              <p className="text-[0.65rem] md:text-xs">8.88 lakh subscriber</p>
             </div>
             <Button
-              className="rounded-3xl disabled:cursor-not-allowed"
+              className="text-xs md:text-base h-8 md:h-auto rounded-full disabled:cursor-not-allowed"
               disabled={
                 !isAuthenticated || video?.owner?._id === currentUser._id
               }
+              onClick={isSubscribed ? handleUnsubscribe : handleSubscribe}
             >
-              Subscribe
+              {isSubscribed ? "Unsubscribe" : "Subscribe"}
             </Button>
           </div>
-          <div className="flex gap-5 items-center w-full">
-            <div>
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-5 sm:items-center w-full">
+            <div className="flex">
               <Button
                 className="text-black bg-gray-200 hover:bg-gray-300 rounded-l-full rounded-r-none p-2"
                 disabled={!isAuthenticated}
@@ -121,44 +152,49 @@ const Video = () => {
                 </span>
               </Button>
             </div>
-            <Button
-              className="flex gap-1 text-black bg-gray-200 hover:bg-gray-300 rounded-full p-2 "
-              disabled={!isAuthenticated}
-            >
-              <span>
-                <ShareIcon className="font-extrathin text-sm" />
-              </span>
-              <span>Share</span>
-            </Button>
-            <Button
-              className="flex gap-1 text-black bg-gray-200 hover:bg-gray-300 rounded-full p-2"
-              disabled={!isAuthenticated}
-            >
-              <span>
-                <DownloadIcon className="font-extrathin text-sm" />
-              </span>
-              <span>Download</span>
-            </Button>
-            <Button
-              className="flex gap-1 text-black bg-gray-200 hover:bg-gray-300 rounded-full p-2"
-              disabled={!isAuthenticated}
-            >
-              <span>
-                <MoreHorizIcon className="text-xs" />
-              </span>
-            </Button>
+            <div className="flex gap-5 items-center w-full">
+              <Button
+                className="flex gap-1 text-black bg-gray-200 hover:bg-gray-300 rounded-full p-2 "
+                disabled={!isAuthenticated}
+              >
+                <span>
+                  <ShareIcon className="font-extrathin text-sm" />
+                </span>
+                <span>Share</span>
+              </Button>
+              <Button
+                className="flex gap-1 text-black bg-gray-200 hover:bg-gray-300 rounded-full p-2"
+                disabled={!isAuthenticated}
+              >
+                <span>
+                  <DownloadIcon className="font-extrathin text-sm" />
+                </span>
+                <span>Download</span>
+              </Button>
+              <Button
+                className="flex gap-1 text-black bg-gray-200 hover:bg-gray-300 rounded-full p-2"
+                disabled={!isAuthenticated}
+              >
+                <span>
+                  <PopoverMenu/>
+                </span>
+              </Button>
+            </div>
           </div>
         </div>
-        <div className="bg-gray-200 rounded-2xl p-3">
-          <p className="font-semibold">
+        <div className="bg-gray-200 rounded-2xl p-3 w-full">
+          <p className="text-sm md:text-base font-semibold">
             {video?.view || "1.7 lakh"} views •{" "}
             {format(video?.createdAt) || "2 weeks ago"}
           </p>
-          <div className="text-md">
+          <div className="text-sm md:text-base">
             <div>{video?.description}</div>
-            <div className="flex gap-2">
+            <div className="flex gap-x-2 flex-wrap">
               {video?.tags?.map((tag, index) => (
-                <span key={index} className="italic text-blue-500 text-sm">
+                <span
+                  key={index}
+                  className=" italic text-blue-500 text-[0.8rem] md:text-sm"
+                >
                   {"#" + tag}
                 </span>
               ))}
@@ -177,7 +213,7 @@ const Video = () => {
         style={{ gridAutoRows: "min-content" }}
       >
         {isLoading ? (
-          <h1 className="mx-auto text-2xl">Loading...</h1>
+          <h1 className="mx-auto text-base md:text-xl">Loading...</h1>
         ) : (
           recommendedVideos
             .filter((video) => video._id != id)
@@ -223,48 +259,3 @@ export default Video;
           />
         ))} */
 }
-
-/*
-Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi
-            ducimus dolores, nihil earum repellendus placeat iste. Similique
-            libero aliquam debitis dolorum perspiciatis ad officiis quia aut
-            blanditiis hic, adipisci aperiam nesciunt possimus reprehenderit
-            deserunt maxime illum expedita, inventore, totam laboriosam commodi
-            in earum. Odio voluptates, illum possimus deleniti rem cumque eaque
-            vel quisquam consectetur fugiat nam voluptate, reiciendis quae
-            veritatis dolorum perferendis. Excepturi laboriosam eos natus ipsa
-            quod est neque labore atque vero nobis unde ex minima quae quisquam
-            corrupti deserunt eaque odio quidem cupiditate sed, nihil quam
-            laborum. Facilis tenetur corporis, in qui fugiat est temporibus
-            alias ad ea? 1. Lorem ipsum dolor sit amet consectetur adipisicing
-            elit. Earum autem labore deserunt est sapiente quas sint a eligendi
-            in necessitatibus iure fugit, aperiam officiis. 1. Lorem ipsum dolor
-            sit amet consectetur adipisicing elit. Earum autem labore deserunt
-            est sapiente quas sint a eligendi in necessitatibus iure fugit,
-            aperiam officiis. 1. Lorem ipsum dolor sit amet consectetur
-            adipisicing elit. Earum autem labore deserunt est sapiente quas sint
-            a eligendi in necessitatibus iure fugit, aperiam officiis. 1. Lorem
-            ipsum dolor sit amet consectetur adipisicing elit. Earum autem
-            labore deserunt est sapiente quas sint a eligendi in necessitatibus
-            iure fugit, aperiam officiis. 1. Lorem ipsum dolor sit amet
-            consectetur adipisicing elit. Earum autem labore deserunt est
-            sapiente quas sint a eligendi in necessitatibus iure fugit, aperiam
-            officiis. 1. Lorem ipsum dolor sit amet consectetur adipisicing
-            elit. Earum autem labore deserunt est sapiente quas sint a eligendi
-            in necessitatibus iure fugit, aperiam officiis. 1. Lorem ipsum dolor
-            sit amet consectetur adipisicing elit. Earum autem labore deserunt
-            est sapiente quas sint a eligendi in necessitatibus iure fugit,
-            aperiam officiis. 1. Lorem ipsum dolor sit amet consectetur
-            adipisicing elit. Earum autem labore deserunt est sapiente quas sint
-            a eligendi in necessitatibus iure fugit, aperiam officiis. 1. Lorem
-            ipsum dolor sit amet consectetur adipisicing elit. Earum autem
-            labore deserunt est sapiente quas sint a eligendi in necessitatibus
-            iure fugit, aperiam officiis. 1. Lorem ipsum dolor sit amet
-            consectetur adipisicing elit. Earum autem labore deserunt est
-            sapiente quas sint a eligendi in necessitatibus iure fugit, aperiam
-            officiis. 1. Lorem ipsum dolor sit amet consectetur adipisicing
-            elit. Earum autem labore deserunt est sapiente quas sint a eligendi
-            in necessitatibus iure fugit, aperiam officiis.
-            */
-
-// const videoUrl = "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8";

@@ -7,31 +7,27 @@ import { getData } from "@/api/axios";
 import { format } from "timeago.js";
 
 const Home = () => {
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation(); 
   const observerElem = useRef(null);
 
-  useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: "instant",
-    });
-  }, [pathname]);
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useInfiniteQuery({
-      queryKey: ["videos"],
-      queryFn: async ({ pageParam = 1 }) => {
-        const response = await getData(
-          `/video/videos?page=${pageParam}&limit=6`
-        );
-        // console.log(response.data)
-        return response.data;
-      },
-      getNextPageParam: (lastPage, pages) => {
-        return lastPage.hasNextPage ? pages.length + 1 : undefined;
-      },
-    });
+  const searchParams = new URLSearchParams(search);
+  const query = searchParams.get("q"); 
+
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
+    queryKey: ["videos", query], 
+    queryFn: async ({ pageParam = 1 }) => {
+      const requestUrl = query
+        ? `/video/videos?page=${pageParam}&limit=6&q=${query}`
+        : `/video/videos?page=${pageParam}&limit=6`;
+        
+      const response = await getData(requestUrl);
+      return response.data;
+    },
+    getNextPageParam: (lastPage, pages) => {
+      return lastPage.hasNextPage ? pages.length + 1 : undefined;
+    },
+  });
 
   const handleObserver = useCallback(
     (entries) => {
@@ -107,53 +103,3 @@ const Home = () => {
 };
 
 export default Home;
-
-// import React, { useEffect, useState } from "react";
-// import ScrollablePanel from "@/components/ScrollablePanel";
-// // import Videos from "./Videos";
-
-// const videos = Array.from({ length: 20 }, (_, index) => `Video ${index + 1}`);
-
-// const App = () => {
-//   return (
-//     <div className="App">
-//       <ScrollablePanel />
-//       <div className="mt-4">
-//         <div className="py-4">
-//           {videos.map((video, index) => (
-//             <div
-//               key={index}
-//               className="mb-4 p-4 bg-gray-100 rounded-lg shadow-md"
-//             >
-//               {video}
-//             </div>
-//           ))}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default App;
-
-{
-  /* {Array.from({ length: 50 }, (_, index) => (
-            <VideoCard
-              key={video?.id || index}
-              id={video?.id || 1}
-              thumbnail={
-                video?.thumbnail || "https://via.placeholder.com/640x360"
-              }
-              channelLogo={video?.avatar || "https://via.placeholder.com/48"} //avatar
-              title={
-                video?.title ||
-                "Hey Guys! welcome to my Youtube Channel | By John Doe and friends | First Youtube video"
-              }
-              channelName={video?.channelName || "Channel Name"}
-              views={video?.views || "3.5 lakh"}
-              uploadTime={video?.createdAt || "1 year ago"}
-              videoLength={video?.duration || "3:00:00"}
-              small={false}
-            />
-          ))} */
-}

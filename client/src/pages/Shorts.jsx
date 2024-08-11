@@ -20,21 +20,22 @@ const shorts = [
     views: "4.2K",
     timeAgo: "2 months ago",
   },
+  {
+    thumbnail: "https://via.placeholder.com/350x600",
+    channelLogo: "https://via.placeholder.com/40",
+    channelName: "Channel 4",
+    title:
+      "💪C'mon! Learn How To Give CPR and Save Life - By Kishor Singh #shorts",
+    views: "3.5K",
+    timeAgo: "1 year ago",
+  },
   // Add more Short objects as needed
 ];
 
 const Shorts = () => {
-  // const { pathname } = useLocation();
-  // useEffect(() => {
-  //   window.scrollTo({
-  //     top: 0,
-  //     left: 0,
-  //     behavior: "instant",
-  //   });
-  // }, [pathname]);
 
   return (
-    <div className="w-full overflow-y-scroll h-screen flex flex-col items-center">
+    <div className="w-full overflow-y-scroll h-full flex flex-col items-center">
       {shorts.map((short, index) => (
         <div className="flex" key={index}>
           <ShortsCard short={short} />

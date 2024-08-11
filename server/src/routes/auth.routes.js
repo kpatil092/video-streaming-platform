@@ -1,41 +1,48 @@
-// Need to check, if redundant we will remove httpOnly from access token
-
 import { Router } from "express";
-import jwt from "jsonwebtoken";
+import {
+  checkRefreshTokens,
+  loginUser,
+  logoutUser,
+  refreshAccessToken,
+  registerUser,
+} from "../controllers/auth.controller.js";
+import { upload } from "../middlewares/multer.middleware.js";
+import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-router.route("/check").get((req, res) => {
-  const token = req.cookies.accessToken;
-  if (!token) {
-    // console.log(token);
-    return res.status(401).json({ message: "Not authenticated" }); //unauthorized
-  }
-  try {
-    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-    res.status(200).json({ user: decoded.user });
-  } catch (err) {
-    // console.log(err);
-    res.status(401).json({ message: "Not authenticated" });
-  }
-});
+router.route("/check-refresh-token").post(checkRefreshTokens);
 
-router.route('/check-refresh-token').post((req, res) => {
-  const refreshToken = req.cookies.refreshToken;
+router.route("/refresh-token").post(refreshAccessToken);
 
-  if (!refreshToken) {
-    return res.status(200).json({ exists: false });
-  }
+router.route("/register").post(
+  upload.fields([
+    { name: "avatar", maxCount: 1 },
+    { name: "coverImage", maxCount: 1 },
+  ]),
+  registerUser
+);
 
-  // Verify the refresh token
-  jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
-    if (err) {
-      return res.status(200).json({ exists: false });
-    }
+router.route("/login").post(loginUser);
 
-    // Refresh token is valid
-    return res.status(200).json({ exists: true });
-  });
-});
+router.route("/logout").post(verifyJWT, logoutUser);
 
 export default router;
+
+// (req, res) => {
+//   const refreshToken = req.cookies.refreshToken;
+
+//   if (!refreshToken) {
+//     return res.status(200).json({ exists: false });
+//   }
+
+//   // Verify the refresh token
+//   jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+//     if (err) {
+//       return res.status(200).json({ exists: false });
+//     }
+
+//     // Refresh token is valid
+//     return res.status(200).json({ exists: true });
+//   });
+// }

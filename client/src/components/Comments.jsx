@@ -30,13 +30,13 @@ const SingleComment = ({ channelLogo, channelName, createdAt, content }) => {
         />
       </div>
       <div className="flex flex-col w-full">
-        <div className="flex gap-5 text-sm items-center">
+        <div className="flex gap-5 text-[0.85rem] md:text-sm items-center">
           <span className="font-semibold">{channelName || "Channel Name"}</span>
           <span className="text-gray-400 text-xs">
             {createdAt || "12 hours ago"}
           </span>
         </div>
-        <p className="text-md">
+        <p className="text-sm md:text-base">
           {content ||
             "Lorem ipsum dolor sit amet consectetur adipisicing elit. Est suscipit recusandae, illum laborum soluta iste id perspiciatis repudiandae accusantium iure, fugiat aperiam asperiores?"}
         </p>
@@ -72,7 +72,6 @@ const Comments = ({ commentCount }) => {
   const observerElem = useRef(null);
   const { id } = useParams();
   const { isAuthenticated, currentUser } = useAuth();
-  // const queryClient = useQueryClient();
 
   const wordLimit = 300;
   const maxLen = 3000;
@@ -120,7 +119,7 @@ const Comments = ({ commentCount }) => {
 
   const handleChange = (e) => {
     const inputValue = e.target.value;
-    const words = inputValue.split(/\s+/).filter(Boolean); // Split by spaces and filter out empty strings
+    const words = inputValue.split(/\s+/).filter(Boolean);
     if (words.length <= wordLimit && inputValue.length <= maxLen) {
       setContentValue(inputValue);
     } else if (inputValue.length > maxLen) {
@@ -146,7 +145,6 @@ const Comments = ({ commentCount }) => {
       console.log(response);
       if (response.statusCode === 200) {
         toast.success("Comment added to the video.");
-        // queryClient.invalidateQueries(["comments"]);
       }
     } catch (error) {
       setErrorMessage("Unable to add comment.");
@@ -160,7 +158,7 @@ const Comments = ({ commentCount }) => {
     <>
       <div className="flex flex-col gap-3 w-full pt-3">
         <div className="flex gap-10">
-          <h2 className="font-bold text-xl">{commentCount || "No"} Comments</h2>
+          <h2 className="font-bold text-base md:text-xl">{commentCount || "No"} Comments</h2>
           {/* <Button className="text-s font-semibold bg-transparent p-0 h-auto hover:bg-transparent">
               ⫸ Sort by
             </Button> */}
@@ -180,7 +178,7 @@ const Comments = ({ commentCount }) => {
                 maxRows={8}
                 value={contentValue}
                 onChange={handleChange}
-                className="mt-1 p-2 border-t-0 border-x-0 border-b-[1.5px] bg-transparent border-gray-400 w-full focus:outline-none focus:border-gray-800 resize-none transition-colors"
+                className="text-sm md:text-base mt-1 p-2 border-t-0 border-x-0 border-b-[1.5px] bg-transparent border-gray-400 w-full focus:outline-none focus:border-gray-800 resize-none transition-colors"
               />
               <div className="flex justify-end gap-7">
                 <Button
@@ -227,7 +225,7 @@ const Comments = ({ commentCount }) => {
         </div>
         <div
           ref={observerElem}
-          className="h-10 flex justify-center items-center"
+          className="text-sm md:text-base h-10 flex justify-center items-center"
         >
           {isFetchingNextPage ? <span>Loading...</span> : null}
           {!commentCount ? (
@@ -243,16 +241,3 @@ const Comments = ({ commentCount }) => {
 };
 
 export default Comments;
-
-// {Array.from({ length: counts }, (_, index) => (
-// <div key={index}>
-//   <SingleComment
-//     channelLogo={"https://via.placeholder.com/40/"}
-//     channelName={"Channel Name"}
-//     createdAt={"12 hours ago"}
-//     content={
-//       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Est suscipit recusandae, illum laborum soluta iste id perspiciatis repudiandae accusantium iure, fugiat aperiam asperiores?"
-//     }
-//   />
-// </div>
-// ))}

@@ -1,4 +1,3 @@
-// src/components/Sidebar.jsx
 import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 
@@ -23,7 +22,7 @@ import FlagIcon from "@mui/icons-material/Flag";
 
 const categories = [
   [
-    { name: "Home", id: 1, path: "/", icon: () => <HomeOutlinedIcon /> },
+    { name: "Home", id: 1, path: "/home", icon: () => <HomeOutlinedIcon /> },
     {
       name: "Shorts",
       id: 2,
@@ -33,7 +32,7 @@ const categories = [
     {
       name: "Subscription",
       id: 3,
-      path: "/subscription",
+      path: "/subscriptions",
       icon: () => <SubscriptionsOutlinedIcon />,
     },
     {
@@ -73,7 +72,7 @@ const categories = [
     },
   ],
   [
-    { name: "Setting", id: 10, path: "/setting", icon: () => <SettingsIcon /> },
+    { name: "Settings", id: 10, path: "/settings", icon: () => <SettingsIcon /> },
     { name: "Report", id: 11, path: "/report", icon: () => <FlagIcon /> },
   ],
 ];
@@ -119,7 +118,6 @@ const Sidebar = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, [window.innerWidth]);
-  // !(parseInt(windowWidth) < ScreenWidth.lg);
 
   return (
     <div

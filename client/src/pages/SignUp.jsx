@@ -51,7 +51,7 @@ const SignUp = () => {
     // console.log(formData.entries);
 
     try {
-      const response = await postData("/users/register", formData, {
+      const response = await postData("/auth/register", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

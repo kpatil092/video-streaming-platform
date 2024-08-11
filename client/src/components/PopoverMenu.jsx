@@ -1,105 +1,90 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
+import { DialogBoxPlaylist } from "./DialogBox";
 
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Separator } from "./ui/separator";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import QueueIcon from "@mui/icons-material/Queue";
 import WatchLaterIcon from "@mui/icons-material/WatchLater";
 import FolderSpecialIcon from "@mui/icons-material/FolderSpecial";
 import GetAppIcon from "@mui/icons-material/GetApp";
 import ShareIcon from "@mui/icons-material/Share";
 import NotInterestedIcon from "@mui/icons-material/NotInterested";
-import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import ReportIcon from "@mui/icons-material/Report";
 
 const PopoverMenu = () => {
-  const popoverMenuRef = useRef(null);
-
-  // useEffect(() => {
-  //   const handleClickOutside = (event) => {
-  //     if (
-  //       popoverMenuRef.current && !popoverMenuRef.current.contains(event.target)
-  //     ) {
-  //       setSuggestions([]);
-  //     }
-  //   };
-
-  //   document.addEventListener("mousedown", handleClickOutside);
-  //   document.addEventListener("scrolldown", handleClickOutside);
-  //   document;
-  //   return () => {
-  //     document.removeEventListener("mousedown", handleClickOutside);
-  //     document.removeEventListener("scroll", handleClickOutside);
-  //   };
-  // }, []);
-
   return (
-    <div className="flex" ref={popoverMenuRef}>
-      <Popover className="flex-1">
-        <PopoverTrigger className="h-6 w-6">
-          <MoreVertIcon />
-        </PopoverTrigger>
-        <PopoverContent className="absolute right-0 mt-2 w-60 bg-white border border-gray-200 rounded-lg shadow-lg z-10 p-0 text-sm">
-          <div>
-            <div className="text-sm">
-              <button className="flex items-center px-4 py-1 w-full text-left hover:bg-gray-100">
-                <span className="mr-3">
-                  <QueueIcon />
-                </span>
-                Add to queue
-              </button>
-              <button className="flex items-center px-4 py-2 w-full text-left hover:bg-gray-100">
+    <div className="flex">
+      <Dialog>
+        <DropdownMenu>
+          <DropdownMenuTrigger className="focus:outline-none">
+            <MoreVertIcon />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DialogTrigger asChild>
+              {/*Dialog for save to playlist*/}
+              <DropdownMenuItem className="cursor-pointer disabled:cursor-not-allowed">
                 <span className="mr-3">
                   <WatchLaterIcon />
                 </span>
-                Save to Watch Later
-              </button>
-              <button className="flex items-center px-4 py-2 w-full text-left hover:bg-gray-100">
+                Save to Watch later
+              </DropdownMenuItem>
+            </DialogTrigger>
+            <DialogTrigger asChild>
+              {/*Dialog for save to playlist*/}
+              <DropdownMenuItem className="cursor-pointer disabled:cursor-not-allowed">
                 <span className="mr-3">
                   <FolderSpecialIcon />
                 </span>
                 Save to playlist
-              </button>
-              <button className="flex items-center px-4 py-2 w-full text-left hover:bg-gray-100">
-                <span className="mr-3">
-                  <GetAppIcon />
-                </span>
-                Download
-              </button>
-              <button className="flex items-center px-4 py-2 w-full text-left hover:bg-gray-100">
-                <span className="mr-3">
-                  <ShareIcon />
-                </span>
-                Share
-              </button>
-              <Separator className="my-1" />
-              <button className="flex items-center px-4 py-2 w-full text-left hover:bg-gray-100">
-                <span className="mr-3">
-                  <NotInterestedIcon />
-                </span>
-                Not interested
-              </button>
-              <button className="flex items-center px-4 py-2 w-full text-left hover:bg-gray-100">
-                <span className="mr-3">
-                  <RemoveCircleOutlineIcon />
-                </span>
-                Don't recommend channel
-              </button>
-              <button className="flex items-center px-4 py-2 w-full text-left hover:bg-gray-100">
-                <span className="mr-3">
-                  <ReportIcon />
-                </span>
-                Report
-              </button>
-            </div>
-          </div>
-        </PopoverContent>
-      </Popover>
+              </DropdownMenuItem>
+            </DialogTrigger>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="cursor-pointer disabled:cursor-not-allowed"
+              disabled={1}
+            >
+              <span className="mr-3">
+                <GetAppIcon />
+              </span>
+              Download
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="cursor-pointer disabled:cursor-not-allowed"
+              disabled={1}
+            >
+              <span className="mr-3">
+                <ShareIcon />
+              </span>
+              Share
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="cursor-pointer disabled:cursor-not-allowed"
+              disabled={1}
+            >
+              <span className="mr-3">
+                <NotInterestedIcon />
+              </span>
+              Not interested
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="cursor-pointer disabled:cursor-not-allowed">
+              <span className="mr-3">
+                <ReportIcon />
+              </span>
+              Report
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <DialogBoxPlaylist />
+      </Dialog>
     </div>
   );
 };

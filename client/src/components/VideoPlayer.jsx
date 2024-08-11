@@ -23,12 +23,36 @@ export const VideoPlayer = ({ videoUrl, onReady }) => {
             type: videoUrl.endsWith(".m3u8") ? "application/x-mpegURL" : "video/mp4",
           },
         ],
+        controlBar: {
+          children: [
+            'playToggle',
+            'volumePanel',
+            'currentTimeDisplay',
+            'timeDivider',
+            'durationDisplay',
+            'progressControl',
+            'remainingTimeDisplay',
+            'playbackRateMenuButton',
+            'fullscreenToggle'
+          ]
+        },
+        playbackRates: [0.5, 1, 1.5, 2],
       };
 
       const player = (playerRef.current = videojs(videoElement, options, () => {
         videojs.log("player is ready");
         onReady && onReady(player);
       }));
+
+      player.on('loadedmetadata', () => {
+        const videoHeight = player.videoHeight();
+        const videoWidth = player.videoWidth();
+        if (videoHeight > videoWidth) {
+          player.aspectRatio('9:16'); // Switch to portrait aspect ratio
+        } else {
+          player.aspectRatio('16:9'); // Default to landscape aspect ratio
+        }
+      });
 
       videoElement.addEventListener("contextmenu", handleContextMenu);
     }
@@ -49,10 +73,8 @@ export const VideoPlayer = ({ videoUrl, onReady }) => {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto flex flex-col items-center rounded-2xl">
-      {/* <h2 className="text-xl font-bold mb-4">{title}</h2> */}
-      <div ref={videoRef} className="w-full"></div>
-    </div>
+    // <div className=""></div>
+    <div className="w-full" ref={videoRef}></div>
   );
 };
 

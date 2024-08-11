@@ -1,4 +1,3 @@
-// src/components/Header.jsx
 import React, { useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 
@@ -29,13 +28,10 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import SettingsIcon from "@mui/icons-material/Settings";
 import FlagIcon from "@mui/icons-material/Flag";
 
-
-
 const Header = () => {
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  
+
   const navigate = useNavigate();
 
   const { setSidebarToggle } = useSidebarMessage();
@@ -48,7 +44,7 @@ const Header = () => {
     setLoading(true);
     setError("");
     try {
-      const response = await postData("/users/logout");
+      const response = await postData("/auth/logout");
       // console.log(response);
       navigate("/");
       window.location.reload();

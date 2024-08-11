@@ -6,8 +6,8 @@ const ShortsCard = ({ short }) => {
   return (
     // <div className="flex flex-2my-4 "> </div>
       <div className="w-full flex justify-center items-end my-4 gap-4">
-        <div className="relative max-w-md mx-auto overflow-hidden rounded-lg shadow-lg">
-          <img src={short.thumbnail} alt={short.title} className="w-full" />
+        <div className="relative max-w-md mx-auto overflow-hidden rounded-lg shadow-lg ">
+          <img src={short.thumbnail} alt={short.title} className="w-full " />
           <div className="absolute bottom-0 left-0 p-4 w-full flex items-center">
             <div>
               <div className="flex gap-2 items-center mb-1">

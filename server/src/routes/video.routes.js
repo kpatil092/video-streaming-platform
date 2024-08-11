@@ -3,6 +3,7 @@ import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import {
   deleteVideo,
+  getKeywords,
   getVideoById,
   getVideos,
   updateVideoDetails,
@@ -17,6 +18,9 @@ import {
 const router = Router();
 
 router.route("/videos").get(getVideos);
+
+// search route
+router.route("/keyword").get(getKeywords);
 router.route("/:id").get(getVideoById);
 
 //  secured routes

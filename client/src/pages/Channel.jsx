@@ -6,19 +6,11 @@ import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Channel = () => {
-  const { pathname } = useLocation();
   const { currentUser } = useAuth();
   // console.log(currentUser);
-  useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: "instant",
-    });
-  }, [pathname]);
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center w-full">
       <div className="flex flex-col xl:w-[95%] mt-5 gap-3 px-4">
         {/* Cover Image */}
         <div className="flex items-center w-full h-auto max-h-[200px] overflow-hidden bg-gray-200 rounded-2xl">
@@ -48,15 +40,23 @@ const Channel = () => {
             <p className="text-gray-600 text-xs lg:text-sm">
               More about this channel
             </p>
-            <div className="flex flex-1 gap-5 items-center justify-start">
-              <Button className="text-sm lg:text-md rounded-3xl bg-gray-200 hover:bg-gray-300 text-black">
+            <div className="hidden sm:flex flex-1 gap-5 items-center justify-start">
+              <Button className="text-xs sm:text-sm lg:text-md rounded-3xl bg-gray-200 hover:bg-gray-300 text-black">
                 Customise channel
               </Button>
-              <Button className="rounded-3xl bg-gray-200 hover:bg-gray-300 text-black">
+              <Button className="text-xs sm:text-sm lg:text-md rounded-3xl bg-gray-200 hover:bg-gray-300 text-black">
                 Manage videos
               </Button>
             </div>
           </div>
+        </div>
+        <div className="flex sm:hidden flex-1 gap-5 items-center justify-start">
+          <Button className="text-xs sm:text-sm lg:text-md rounded-3xl bg-gray-200 hover:bg-gray-300 text-black">
+            Customise channel
+          </Button>
+          <Button className="text-xs sm:text-sm lg:text-md rounded-3xl bg-gray-200 hover:bg-gray-300 text-black">
+            Manage videos
+          </Button>
         </div>
         <div className="flex gap-5 items-center justify-start">
           <span className="p-2 font-semibold text-gray-700">Home</span>
@@ -65,7 +65,7 @@ const Channel = () => {
         </div>
       </div>
       <Separator />
-      <div className="h-[620px] w-[1100px] flex items-center justify-center">
+      <div className="h-[620px] w-full flex items-center justify-center">
         <div className="flex flex-col gap-5 items-center justify-center">
           <img
             src="https://via.placeholder.com/100x100"
