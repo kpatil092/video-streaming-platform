@@ -6,10 +6,12 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(false);
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
       try {
+        setAuthLoading(true);
         const response = await axiosInstance.get("/users/current-user");
         if (response.status === 200) {
           const user = response.data.data;
@@ -20,13 +22,15 @@ export const AuthProvider = ({ children }) => {
       } catch (error) {
         setIsAuthenticated(false);
         setCurrentUser(null);
+      } finally {
+        setAuthLoading(false);
       }
     };
     fetchCurrentUser();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, currentUser }}>
+    <AuthContext.Provider value={{ isAuthenticated, currentUser, authLoading }}>
       {children}
     </AuthContext.Provider>
   );

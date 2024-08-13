@@ -33,9 +33,9 @@ A full-featured video streaming application built with ReactJS, React-query, Tai
 ## Installation
 
 ### Prerequisites
-- NodeJS (v14 or higher)
+- NodeJS
 - MongoDB
-- Cloudinary account for video storage
+- Cloudinary account for video/image storage
 
 ### Steps
 

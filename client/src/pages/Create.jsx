@@ -110,10 +110,10 @@ const Create = () => {
   };
 
   return (
-    <div className="flex justify-center items-center">
+    <div className="flex justify-center items-center ">
       <form
         onSubmit={handleSubmit}
-        className="w-[90%] flex flex-col h-screen p-10"
+        className="w-[90%] flex flex-col h-screen md:p-10"
       >
         <div className="flex justify-center gap-5 flex-col-reverse lg:flex-row w-full">
           {/* Left Side */}

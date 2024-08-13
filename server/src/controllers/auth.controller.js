@@ -76,12 +76,12 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 });
 
 const checkRefreshTokens = asyncHandler(async (req, res) => {
-  const refreshToken = req.cookies.refreshToken;
+  const refreshToken = req.cookies?.refreshToken;
 
   if (!refreshToken) {
     return res
       .status(200)
-      .json(new ApiResponse(200, { exists: flase }, "No refresh token found."));
+      .json(new ApiResponse(200, { exists: false }, "Tokens not available."));
   }
 
   // Verify the refresh token

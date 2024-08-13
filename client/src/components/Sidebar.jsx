@@ -30,7 +30,7 @@ const categories = [
       icon: () => <FilterCenterFocusOutlinedIcon />,
     },
     {
-      name: "Subscription",
+      name: "Subscriptions",
       id: 3,
       path: "/subscriptions",
       icon: () => <SubscriptionsOutlinedIcon />,
@@ -53,7 +53,7 @@ const categories = [
     {
       name: "Video",
       id: 7,
-      path: "/videos",
+      path: "/c/videos",
       icon: () => <VideocamOutlinedIcon />,
     },
     {
@@ -65,9 +65,9 @@ const categories = [
   ],
   [
     {
-      name: "Subscriptions",
+      name: "Subscription",
       id: 9,
-      path: "/subscriptions",
+      path: "/subscription",
       icon: () => <TocIcon />,
     },
   ],

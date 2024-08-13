@@ -171,14 +171,13 @@ const Video = () => {
                 </span>
                 <span>Download</span>
               </Button>
-              <Button
-                className="flex gap-1 text-black bg-gray-200 hover:bg-gray-300 rounded-full p-2"
+
+              <span
+                className="flex text-black bg-gray-200 hover:bg-gray-300 rounded-full p-2"
                 disabled={!isAuthenticated}
               >
-                <span>
-                  <PopoverMenu/>
-                </span>
-              </Button>
+                <PopoverMenu />
+              </span>
             </div>
           </div>
         </div>

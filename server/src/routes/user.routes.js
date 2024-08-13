@@ -5,8 +5,8 @@ import {
   changeCurrentPassword,
   getCurrentUser,
   getUserChannelProfile,
-  getUsersVideos,
-  getWatchHistory,
+  getCurrentUsersVideos,
+  getUserWatchHistory,
   updateAccountDetails,
   updateCoverImage,
   updateUserAvatar,
@@ -21,10 +21,9 @@ import {
 
 const router = Router();
 
-router.route("/c/videos/:channelName").get(getUsersVideos);
-
 // secured route
 router.route("/current-user").get(verifyJWT, getCurrentUser);
+router.route("/c/videos").get(verifyJWT, getCurrentUsersVideos);
 
 // updaing routes
 router
@@ -38,7 +37,7 @@ router.route("/update").patch(verifyJWT, updateAccountDetails);
 
 // channel routes
 router.route("/c/:channelName").get(verifyJWT, getUserChannelProfile);
-router.route("/history").get(verifyJWT, getWatchHistory);
+router.route("/history").get(verifyJWT, getUserWatchHistory);
 
 // Comment route
 router.route("/comments").get(verifyJWT, getUserComment);

@@ -41,8 +41,8 @@ axiosInstance.interceptors.response.use(
           // Refresh token does not exist, proceed without refreshing
           return Promise.reject(error);
         }
-      } catch (refreshError) {
-        console.error("Refresh token request failed", refreshError);
+      } catch (err) {
+        console.error("Refresh token request failed", err);
 
         // Remove the tokens from cookies (handled by backend)
         await axiosInstance.post("/auth/logout");
@@ -50,7 +50,7 @@ axiosInstance.interceptors.response.use(
         // Optional: Redirect to login page or handle logout
         // window.location.href = '/sign-in';
 
-        return Promise.reject(refreshError);
+        return Promise.reject(err);
       }
     }
 
@@ -109,42 +109,3 @@ export const deleteData = async (endpoint) => {
 };
 
 export default axiosInstance;
-
-// import axios from 'axios';
-
-// // axios instance
-// const axiosInstance = axios.create({
-//   baseURL: '/api/v1', // Base URL
-//   headers: {
-//     'Content-Type': 'application/json',
-//   },
-//   withCredentials: true, // Ensure cookies are sent with requests
-// });
-
-// // Response interceptor to handle token refresh
-// axiosInstance.interceptors.response.use(
-//   (response) => response,
-//   async (error) => {
-//     const originalRequest = error.config;
-
-//     // Check if the error status is 401 (Unauthorized) and if it's not a retry
-//     if (error.response && error.response.status === 401 && !originalRequest._retry) {
-//       originalRequest._retry = true; // Mark the request as a retry to prevent infinite loops
-
-//       try {
-//         // Attempt to refresh the access token
-//         const { data } = await axiosInstance.post('/users/refresh-token');
-
-//         // Retry the original request with the new access token
-//         return axiosInstance(originalRequest);
-//       } catch (refreshError) {
-//         console.error('Refresh token request failed', refreshError);
-
-//         // Optional: Redirect to login page or handle logout
-//         // window.location.href = '/sign-in';
-//       }
-//     }
-
-//     return Promise.reject(error);
-//   }
-// );

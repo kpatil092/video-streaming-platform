@@ -36,7 +36,7 @@ const Header = () => {
 
   const { setSidebarToggle } = useSidebarMessage();
   const { pathname } = useLocation();
-  const { isAuthenticated, currentUser } = useAuth();
+  const { isAuthenticated, currentUser, authLoading } = useAuth();
 
   const isAuthPage = pathname === "/sign-in" || pathname === "/sign-up";
 
@@ -67,13 +67,13 @@ const Header = () => {
           <MenuIcon />
         </div>
 
-        <div className="flex items-center space-x-2 cursor-pointer">
+        <div className="flex items-center cursor-pointer">
           <img
-            src="https://via.placeholder.com/48"
+            src={"/src/assets/v_logo2.png" || "https://via.placeholder.com/48"}
             alt="Logo"
-            className="h-8 w-8 rounded-full"
+            className="h-6 w-6 rounded-full bg-green-200"
           />
-          <span className="text-xl font-bold hidden sm:block">MyApp</span>
+          <span className="text-xl md:text-xl font-bold hidden sm:block p-2">VidStream</span>
         </div>
       </div>
       {/* Search Bar */}
@@ -81,6 +81,7 @@ const Header = () => {
         <Searchbar />
       </div>
       {/* Profile Icon */}
+
       <div className="flex items-center gap-6">
         {isAuthenticated ? (
           <>
@@ -92,11 +93,11 @@ const Header = () => {
               <DropdownMenuTrigger className="outline-none relative">
                 <Avatar className="h-8 w-8 cursor-pointer">
                   <AvatarImage
-                    src={currentUser.avatar || "https://github.com/shadcn.png"}
+                    src={currentUser?.avatar || "https://github.com/shadcn.png"}
                     className="object-cover"
                   />
                   <AvatarFallback>
-                    {currentUser.fullName?.[0] || "A"}
+                    {currentUser?.fullName?.[0] || "A"}
                   </AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
